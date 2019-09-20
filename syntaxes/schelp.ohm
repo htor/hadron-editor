@@ -1,0 +1,147 @@
+SCHelp {
+  Document = (Element|text)+
+  Element
+    = Class
+    | Title
+    | Summary
+    | Related
+    | Redirect
+    | Categories
+    | ClassTree
+    | Section
+    | SubSection
+    | Examples
+    | Description
+    | ClassMethods
+    | InstanceMethods
+    | Method
+    | Private
+    | Returns
+    | Argument
+    | Keyword
+    | Discussion
+    | Note
+    | Warning
+    | Footnote
+    | UnorderedList
+    | OrderedList
+    | DefinitionList
+    | Tree
+    | Table
+    | codeInline
+    | code
+    | teletypeInline
+    | teletype
+    | Link
+    | Anchor
+    | Emphasis
+    | Strong
+    | Soft
+    | Image
+
+    Body
+    = Warning
+    | Note
+    | UnorderedList
+    | Tree
+    | OrderedList
+    | Table
+    | DefinitionList
+    | ClassTree
+    | Keyword
+    | Image
+    | Link
+    | Strong
+    | Soft
+    | Emphasis
+    | Footnote
+    | codeInline
+    | code
+    | text
+
+  Class = caseInsensitive<"class::"> line
+  Title = caseInsensitive<"title::"> line
+  Summary = caseInsensitive<"summary::"> line
+  Related = caseInsensitive<"related::"> ListOf<(~special (~"," any))+, ","?>
+  Redirect = caseInsensitive<"redirect::"> line
+  Categories = caseInsensitive<"categories::"> line
+  ClassTree = caseInsensitive<"classtree::"> line
+  Note = caseInsensitive<"note::"> (Element|text)+ "::"
+  Warning = caseInsensitive<"warning::"> (Element|text)+ "::"
+  Footnote = caseInsensitive<"footnote::"> (Element|text)+ "::"
+  Section = caseInsensitive<"section::"> line
+  SubSection = caseInsensitive<"subsection::"> line
+  Examples = caseInsensitive<"examples::">
+  Description = caseInsensitive<"description::">
+  ClassMethods = caseInsensitive<"classmethods::">
+  InstanceMethods = caseInsensitive<"instancemethods::">
+  Method = caseInsensitive<"method::"> line Body* Argument* Returns* Discussion*
+  Argument = caseInsensitive<"argument::"> line Body*
+  Returns = caseInsensitive<"returns::"> Body+
+  Discussion = caseInsensitive<"discussion::"> Body+
+  Private = caseInsensitive<"private::"> line
+  Keyword = caseInsensitive<"keyword::"> line
+  UnorderedList = caseInsensitive<"list::"> ListItem+ "::"
+  OrderedList = caseInsensitive<"numberedlist::"> ListItem+ "::"
+  DefinitionList = caseInsensitive<"definitionlist::"> DefinitionItem+ "::"
+  Tree = caseInsensitive<"tree::"> TreeItem+ "::"
+  ListItem = "##" (Element|text)+
+  DefinitionItem = "##" (Element|text)+ "||"? ((Element|text)+)?
+  TreeItem = "##" (Element|text)+
+  Table = caseInsensitive<"table::"> TableRow+ "::"
+  TableRow = "##" TableCell*
+  TableCell = (Element|text)+ "||"? | (Element|text)* "||"
+  Link = caseInsensitive<"link::"> (~"::" any)+ "::"
+  Anchor = caseInsensitive<"anchor::"> (~"::" any)+ "::"
+  Emphasis = caseInsensitive<"emphasis::"> (~"::" any)+ "::"
+  Strong = caseInsensitive<"strong::"> (~"::" any)+ "::"
+  Soft = caseInsensitive<"soft::"> (~"::" any)+ "::"
+  Image = caseInsensitive<"image::"> (~"::" any)+ "::"
+  code = caseInsensitive<"code::"> (~(eol "::") any)+ &(eol "::") eol "::"
+  codeInline = caseInsensitive<"code::"> (~eol (escaped | (~"::" any)))+ "::"
+  teletype = caseInsensitive<"teletype::"> (~(eol "::") any)+ &(eol "::") eol "::"
+  teletypeInline = caseInsensitive<"teletype::"> (~eol (escaped | (~"::" any)))+ "::"
+  text =  escaped | (~special any)+
+  special = escaped | keyword | delimiter
+  escaped = "\\" delimiter
+  delimiter = "::" | "||" | "##"
+  keyword
+    = caseInsensitive<"class::">
+    | caseInsensitive<"title::" >
+    | caseInsensitive<"summary::" >
+    | caseInsensitive<"related::" >
+    | caseInsensitive<"redirect::">
+    | caseInsensitive<"categories::" >
+    | caseInsensitive<"classtree::" >
+    | caseInsensitive<"note::" >
+    | caseInsensitive<"warning::" >
+    | caseInsensitive<"footnote::">
+    | caseInsensitive<"section::" >
+    | caseInsensitive<"subsection::" >
+    | caseInsensitive<"examples::" >
+    | caseInsensitive<"description::">
+    | caseInsensitive<"classmethods::" >
+    | caseInsensitive<"instancemethods::" >
+    | caseInsensitive<"method::" >
+    | caseInsensitive<"private::">
+    | caseInsensitive<"returns::" >
+    | caseInsensitive<"argument::" >
+    | caseInsensitive<"keyword::" >
+    | caseInsensitive<"discussion::">
+    | caseInsensitive<"list::" >
+    | caseInsensitive<"numberedlist::" >
+    | caseInsensitive<"definitionlist::" >
+    | caseInsensitive<"tree::">
+    | caseInsensitive<"table::" >
+    | caseInsensitive<"link::" >
+    | caseInsensitive<"anchor::" >
+    | caseInsensitive<"emphasis::" >
+    | caseInsensitive<"strong::">
+    | caseInsensitive<"soft::" >
+    | caseInsensitive<"image::" >
+    | caseInsensitive<"code::" >
+    | caseInsensitive<"teletype::" >
+  line = (~eol any)+ eol?
+  eol = white* "\r"? "\n" white*
+  white = (" " | "\t")
+}

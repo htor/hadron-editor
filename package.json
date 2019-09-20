@@ -1,0 +1,20 @@
+{
+  "name": "sceditor",
+  "version": "0.0.1",
+  "description": "sc editor",
+  "repository": "https://github.com/htor/...",
+  "license": "MIT",
+  "main": "scripts/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node scripts/test.js"
+  },
+  "devDependencies": {
+    "electron": "^6.0.3"
+  },
+  "dependencies": {
+    "codemirror": "^5.48.4",
+    "ohm-js": "^0.14.0",
+    "supercolliderjs": "^0.14.2"
+  }
+}

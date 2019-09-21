@@ -7,7 +7,7 @@ const scd = require('../syntaxes/scd')
 
 CodeMirror.defineSimpleMode('scd', scd)
 
-exports.init = function init (textarea) {
+function init (textarea) {
   const editor = CodeMirror.fromTextArea(textarea, {
     mode: 'scd',
     value: textarea.value,
@@ -150,3 +150,5 @@ exports.init = function init (textarea) {
 
   return editor
 }
+
+exports.init = init

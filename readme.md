@@ -13,6 +13,7 @@
 - [ ] settings
 
 ## docs
+- [x] render commalist methods
 - [x] add syntax highlighting to code blocks
 - [x] render methods arguments inline
 - [ ] render default method argument values inline
@@ -28,4 +29,4 @@
     * overviews
     * reference
     * tutorials
-- [ ] refactor ohm grammar from `Reference/SCDocSyntax`
+- [x] refactor ohm grammar from `Reference/SCDocSyntax`

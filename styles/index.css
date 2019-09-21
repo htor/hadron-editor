@@ -13,16 +13,6 @@ body {
   min-height: 100vh;
 }
 
-img {
-  max-width: 100%;
-}
-
-code,
-pre:not(.CodeMirror-line) {
-  font: inherit;
-  background: #e8e8e8;
-}
-
 .CodeMirror {
   height: 100%;
   padding: 1em;
@@ -103,6 +93,7 @@ output ul {
   right: 1em;
   text-align: right;
   pointer-events: none;
+  z-index: 1;
 }
 
 button#back,
@@ -150,6 +141,26 @@ button#forward {
   font-weight: bold;
 }
 
+#docs table {
+  margin: 1rem;
+  border-collapse: collapse;
+}
+
+#docs td {
+  padding: .5rem;
+  border: 1px solid;
+}
+
+#docs img {
+  max-width: 100%;
+}
+
+#docs code,
+#docs pre:not(.CodeMirror-line) {
+  font: inherit;
+  background: #e8e8e8;
+  overflow-x: auto;
+}
 
 #docs .CodeMirror {
   height: auto;

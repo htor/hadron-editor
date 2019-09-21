@@ -39,7 +39,6 @@ function lookup (name) {
 }
 
 async function load (url) {
-  console.log('loading url', url);
   if (url.endsWith('.html')) return shell.openExternal(url)
   const [file, anchor] = url.split('#')
   if (!file && anchor) return scroll(anchor)
@@ -68,7 +67,6 @@ async function load (url) {
 function scroll (anchor) {
   const id = anchor && hash(anchor.replace(/^[.\-*]/, '')) || 'docs'
   const el = document.getElementById(id)
-  if (!el) console.log('scroll to ', id, ' not found')
   el.scrollIntoView()
 }
 

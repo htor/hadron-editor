@@ -20,7 +20,18 @@ document.addEventListener('click', (event) => {
   }
 })
 
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'q' && event.metaKey) {
+    if (!confirm('Are you sure?')) {
+      event.preventDefault()
+    }
+  }
+})
+
+help.go('Classes/IdentityDictionary')
+// help.go('Guides/Tour_Of_UGens')
+// help.go('Classes/SinOsc')
 // help.go('Guides/Multichannel-Expansion')
 // help.go('Reference/Adverbs')
-help.go('Classes/Object')
-// help.go('Reference/SCDocSyntax')
+// help.go('Guides/WritingHelp')
+// help.go('Reference/SCDocSyntax#Lists and tables')

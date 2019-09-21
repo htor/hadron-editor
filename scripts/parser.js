@@ -5,7 +5,7 @@ const { HELPDIR, hash } = require('./utils')
 
 const grammar = ohm.grammar(fs.readFileSync('./syntaxes/schelp.ohm', 'utf-8'))
 const doc = { methods: {} }
-let currentMethod
+let currentMethods = []
 
 const semantics = grammar.createSemantics().addOperation('emit', {
   Document (ElementOrText) {
@@ -16,7 +16,7 @@ const semantics = grammar.createSemantics().addOperation('emit', {
         <p>${docs.related}</p>
       `
     }
-    return html
+    return html.replace(/\\::/g, '::')
   },
   Class (tag, line) {
     const title = doc.title = getMatch(line).trim()
@@ -31,7 +31,7 @@ const semantics = grammar.createSemantics().addOperation('emit', {
   },
   Related(tag, line) {
     const related = getMatch(line)
-    const links = related.split(/,\s*/).map((href) =>
+    const links = related.split(/\s*,\s*/).map((href) =>
       `<a href="${href}" title="${href}">${href.split('/').pop()}</a>`
     ).join(', ')
     docs.related = links
@@ -47,7 +47,7 @@ const semantics = grammar.createSemantics().addOperation('emit', {
     return `<p>Classtree: ${getMatch(line).trim()}</p>`
   },
   Note(tag, ElementOrText, tagEnd) {
-    return `<p>Note: ${ElementOrText.emit().join(' ')}</p>`
+    return `<p><strong>Note:</strong> ${ElementOrText.emit().join(' ')}</p>`
   },
   Warning(tag, ElementOrText, tagEnd) {
     return `<p>Warning:<br>${ElementOrText.emit().join(' ')}</p>`
@@ -79,15 +79,20 @@ const semantics = grammar.createSemantics().addOperation('emit', {
     return `<h2>Instance methods</h2>`
   },
   Method(tag, line, Paragraph, Argument, Returns, Discussion) {
-    const title = getMatch(line).trim()
-    const hashed = hash(title)
-    doc.methods[title] = { args: [] }
-    currentMethod = title
-    const arguments = Argument.emit()
-    const argslist = doc.methods[title].args.join(', ')
+    const names = getMatch(line).trim().split(/\s*,\s*/)
+    let methods = ''
+    let arguments
+    for (let name of names) {
+      const hashed = hash(name)
+      doc.methods[name] = { args: [] }
+      currentMethods.push(name)
+      arguments = Argument.emit()
+      const argslist = doc.methods[name].args.join(', ')
+      methods += `<h3><a id="${hashed}">${name}(${argslist})</a></h3>`
+    }
     return `
     <div>
-      <h3><a id="${hashed}">${title}(${argslist})</a></h3>
+      ${methods}
       ${Paragraph.emit().join(' ')}
       <ul>
         ${arguments.join('')}
@@ -96,10 +101,11 @@ const semantics = grammar.createSemantics().addOperation('emit', {
   },
   Argument(tag, line, Paragraph) {
     const name = getMatch(line).trim()
-    doc.methods[currentMethod].args.push(name)
-    return ` <li><strong>${name}</strong>: ${Paragraph.emit()}</li>`
+    for (let currentMethod of currentMethods) {
+      doc.methods[currentMethod].args.push(name)
+    }
+    return `<li><strong>${name}</strong>: ${Paragraph.emit()}</li>`
   },
-  // TEST Tour of UGens ^^^^
   Returns(tag, Paragraph) {
     return `<p>Returns<br>${Paragraph.emit().join(' ')}</p>`
   },
@@ -180,10 +186,10 @@ const semantics = grammar.createSemantics().addOperation('emit', {
     return `<textarea>${getMatch(any)}</textarea>`
   },
   teletypeInline(tag, any, tagEnd) {
-    return `<code>${getMatch(any)}</code>`
+    return `<code>${getMatch(any).replace(/\\::/g, '::')}</code>`
   },
   teletype(tag, any, notEolAndSep, followedByEolAndSep, eol, tagEnd) {
-    return `<pre><code>${getMatch(any)}</code></pre>`
+    return `<pre><code>${getMatch(any).trim()}</code></pre>`
   }
 })
 

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path')
 const ohm = require('ohm-js');
+const linkify = require('linkify-it')()
 const { HELPDIR, hash } = require('./utils')
 
 const grammar = ohm.grammar(fs.readFileSync('./syntaxes/schelp.ohm', 'utf-8'))
@@ -15,6 +16,11 @@ const semantics = grammar.createSemantics().addOperation('emit', {
         <h2>Related</h2>
         <p>${docs.related}</p>
       `
+    }
+    const links = linkify.match(html).filter((match) => match.schema)
+    for (let link of links) {
+      const anchor = `<a href="${link.url}" title="${link.url}">${link.text}</a>`
+      html = html.replace(link.text, anchor)
     }
     return html.replace(/\\::/g, '::')
   },
@@ -116,7 +122,7 @@ const semantics = grammar.createSemantics().addOperation('emit', {
     return `<h4>Private ${getMatch(line).trim()}</h4>`
   },
   Keyword(tag, line) {
-    return `Keyword: ${getMatch(line).trim()}`
+    return ``
   },
   UnorderedList(tag, ListItem, tagEnd) {
     return `<ul>${ListItem.emit().join(' ')}</ul>`

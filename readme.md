@@ -19,14 +19,12 @@
 - [ ] render default method argument values inline
 - [x] make links in docs work
   - [x] basic schelp links
-  - [ ] open external links in default browser
+  - [x] support external links + open in default browser
   - [ ] support internal html links
   - [x] anchors
 - [ ] search function
+- [ ] `keyword::`?
+- [ ] implement `footnote::`
 - [ ] implement `categories::`
-    * guides
-    * classes
-    * overviews
-    * reference
-    * tutorials
-- [x] refactor ohm grammar from `Reference/SCDocSyntax`
+- [ ] implement `classtree::`
+- [ ] implement `tree::`

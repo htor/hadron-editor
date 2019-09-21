@@ -1,3 +1,4 @@
+const { shell } = require('electron')
 const editor = require('./scripts/editor')
 const help = require('./scripts/help')
 
@@ -12,7 +13,11 @@ document.addEventListener('click', (event) => {
     event.preventDefault()
     const link = target
     const href = link.getAttribute('href')
-    help.go(href)
+    if (href.startsWith('http')) {
+      shell.openExternal(href)
+    } else {
+      help.go(href)
+    }
   } else if (target.tagName === 'BUTTON') {
     const button = target
     if (button.id === 'back') help.back()
@@ -28,10 +33,11 @@ document.addEventListener('keydown', (event) => {
   }
 })
 
-help.go('Classes/IdentityDictionary')
+// help.go('Classes/IdentityDictionary')
 // help.go('Guides/Tour_Of_UGens')
 // help.go('Classes/SinOsc')
 // help.go('Guides/Multichannel-Expansion')
 // help.go('Reference/Adverbs')
 // help.go('Guides/WritingHelp')
-// help.go('Reference/SCDocSyntax#Lists and tables')
+help.go('Reference/SCDocSyntax')
+// help.go('Classes/HenonC')

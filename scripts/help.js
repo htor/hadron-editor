@@ -1,5 +1,4 @@
 const path = require('path')
-const { shell } = require('electron')
 const { HELPDIR, hash } = require('./utils')
 const { init } = require('./editor')
 const schelp = require('./parser')
@@ -39,7 +38,6 @@ function lookup (name) {
 }
 
 async function load (url) {
-  if (url.endsWith('.html')) return shell.openExternal(url)
   const [file, anchor] = url.split('#')
   if (!file && anchor) return scroll(anchor)
   docs.innerHTML = 'Loading...'

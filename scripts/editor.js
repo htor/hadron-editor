@@ -35,18 +35,18 @@ exports.init = function init (textarea) {
   })
   //
 
-  editor.on('dblclick', editor => {
-    // let cursor = editor.getCursor()
-    // let parenMatch = editor.getLine(cursor.line)
-    //     .slice(cursor.ch-1,cursor.ch).match(/[()]/)
-    // if (parenMatch) {
-    //     editor.undoSelection()
-    //     selectRegion({ flash: false })
-    // }
+  editor.on('dblclick', (editor) => {
+    let cursor = editor.getCursor()
+    let parenMatch = editor.getLine(cursor.line)
+        .slice(cursor.ch-1,cursor.ch).match(/[()]/)
+    if (parenMatch) {
+        editor.undoSelection()
+        selectRegion({ flash: false })
+    }
   })
 
-  editor.on('blur', editor => {
-    // editor.setSelection(editor.getCursor(), null, { scroll: false })
+  editor.on('blur', (editor) => {
+    editor.setSelection(editor.getCursor(), null, { scroll: false })
   })
 
   // Returns the code selection, line or region

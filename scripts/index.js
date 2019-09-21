@@ -21,6 +21,6 @@ document.addEventListener('click', (event) => {
 })
 
 // help.go('Guides/Multichannel-Expansion')
-// help.go('Classes/Object#-multiChannelPerform')
-help.go('Guides/J-concepts-in-SC')
+// help.go('Reference/Adverbs')
+help.go('Classes/Object')
 // help.go('Reference/SCDocSyntax')

@@ -9,11 +9,14 @@ let currentMethod
 
 const semantics = grammar.createSemantics().addOperation('emit', {
   Document (ElementOrText) {
-    return `
-      ${ElementOrText.emit().join('\n')}
-      <h2>Related</h2>
-      <p>${docs.related}</p>
-    `
+    let html = `${ElementOrText.emit().join('\n')}`
+    if (docs.related) {
+      html += `
+        <h2>Related</h2>
+        <p>${docs.related}</p>
+      `
+    }
+    return html
   },
   Class (tag, line) {
     const title = doc.title = getMatch(line).trim()
@@ -26,16 +29,12 @@ const semantics = grammar.createSemantics().addOperation('emit', {
   Summary(tag, line) {
     return `<blockquote>${getMatch(line).trim()}</blockquote>`
   },
-  Related(tag, ListOfDocs) {
-    docs.related = ListOfDocs.emit()
-  },
-  NonemptyListOf(first, comma , rest) {
-    const list = [first].concat(rest.children).map((item) => {
-      const href = getMatch(item)
-      const title = href.split('/').pop()
-      return `<a href="${href}" title="${href}">${title}</a>`
-    })
-    return list.join(', ')
+  Related(tag, line) {
+    const related = getMatch(line)
+    const links = related.split(/,\s*/).map((href) =>
+      `<a href="${href}" title="${href}">${href.split('/').pop()}</a>`
+    ).join(', ')
+    docs.related = links
   },
   Redirect(tag, line) {
     return `<p>Redirect: ${getMatch(line).trim()}</p>`
@@ -79,7 +78,7 @@ const semantics = grammar.createSemantics().addOperation('emit', {
   InstanceMethods(tag) {
     return `<h2>Instance methods</h2>`
   },
-  Method(tag, line, Body, Argument, Returns, Discussion) {
+  Method(tag, line, Paragraph, Argument, Returns, Discussion) {
     const title = getMatch(line).trim()
     const hashed = hash(title)
     doc.methods[title] = { args: [] }
@@ -89,21 +88,22 @@ const semantics = grammar.createSemantics().addOperation('emit', {
     return `
     <div>
       <h3><a id="${hashed}">${title}(${argslist})</a></h3>
+      ${Paragraph.emit().join(' ')}
       <ul>
         ${arguments.join('')}
       </ul>
     </div>`
   },
-  Argument(tag, line, Body) {
+  Argument(tag, line, Paragraph) {
     const name = getMatch(line).trim()
     doc.methods[currentMethod].args.push(name)
-    return ` <li><strong>${name}</strong>: ${Body.emit()}</li>`
+    return ` <li><strong>${name}</strong>: ${Paragraph.emit()}</li>`
   },
   // TEST Tour of UGens ^^^^
-  Returns(tag, Body) {
-    return `<p>Returns<br>${Body.emit().join(' ')}</p>`
+  Returns(tag, Paragraph) {
+    return `<p>Returns<br>${Paragraph.emit().join(' ')}</p>`
   },
-  Discussion(tag, Body) {
+  Discussion(tag, Paragraph) {
     return '<p>Discussion</p>'
   },
   Private(tag, line) {
@@ -139,18 +139,6 @@ const semantics = grammar.createSemantics().addOperation('emit', {
   TableCell(ElementOrText, delimiter) {
     return `<td>${ElementOrText.emit().join(' ')}</td>`
   },
-  codeInline(tag, any, tagEnd) {
-    return `<code>${getMatch(any)}</code>`
-  },
-  code(tag, any, notEolAndSep, followedByEolAndSep, eol, tagEnd) {
-    return `<textarea>${getMatch(any)}</textarea>`
-  },
-  teletypeInline(tag, any, tagEnd) {
-    return `<code>${getMatch(any)}</code>`
-  },
-  teletype(tag, any, notEolAndSep, followedByEolAndSep, eol, tagEnd) {
-    return `<pre><code>${getMatch(any)}</code></pre>`
-  },
   //Classes/SimpleNumber#-trunc#trunc
   Link(tag, any, tagEnd) {
     const [path, anchor] = getMatch(any).split('#')
@@ -182,8 +170,20 @@ const semantics = grammar.createSemantics().addOperation('emit', {
       </figure>
     `
   },
-  text(text) {
+  Text(text) {
     return getMatch(text)
+  },
+  codeInline(tag, any, tagEnd) {
+    return `<code>${getMatch(any)}</code>`
+  },
+  code(tag, any, notEolAndSep, followedByEolAndSep, eol, tagEnd) {
+    return `<textarea>${getMatch(any)}</textarea>`
+  },
+  teletypeInline(tag, any, tagEnd) {
+    return `<code>${getMatch(any)}</code>`
+  },
+  teletype(tag, any, notEolAndSep, followedByEolAndSep, eol, tagEnd) {
+    return `<pre><code>${getMatch(any)}</code></pre>`
   }
 })
 
@@ -212,7 +212,7 @@ function parse (text, url) {
   }
 }
 
-function verify (grammar) {
+function verify () {
   const dirs = [
     '/Applications/SuperCollider/SuperCollider.app/Contents/Resources/HelpSource/Classes',
     '/Applications/SuperCollider/SuperCollider.app/Contents/Resources/HelpSource/Guides',

@@ -7,7 +7,7 @@ const scd = {
     { regex: /^\b\d+(s+|b+|[sb]\d+)\b/, token: 'number scale-degree' },
     { regex: /^\b((\d+(\.\d+)?([eE][-+]?\d+)?(pi)?)|pi)\b/, token: 'number float' },
     { regex: /^\b0x(\d|[a-f]|[A-F])+/, token: 'number hex-int' },
-    { regex: /^\b[A-Za-z_]\w*\:/, token: 'symbol symbol-arg' },
+    { regex: /^\b[A-Za-z_]\w*:/, token: 'symbol symbol-arg' },
     { regex: /^[a-z]\w*/, token: 'text name' },
     { regex: /^\b[A-Z]\w*/, token: 'class' },
     { regex: /^\b_\w+/, token: 'primitive' },
@@ -17,9 +17,9 @@ const scd = {
     { regex: /^~\w+/, token: 'env-var' },
     { regex: /^\/\/[^\r\n]*/, token: 'comment single-line-comment' },
     { regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: 'string' },
-    { regex: /^[-.,;#()\[\]{}]/, token: 'text punctuation' },
+    { regex: /^[-.,;#()[\]{}]/, token: 'text punctuation' },
     { regex: /\/\*/, push: 'comment', token: 'comment multi-line-comment' },
-    { regex: /^[+\-*/&\|\^%<>=!?]+/, token: 'text operator' },
+    { regex: /^[+\-*/&|^%<>=!?]+/, token: 'text operator' }
   ],
   comment: [
     { regex: /\*\//, pop: true, token: 'comment multi-line-comment' },

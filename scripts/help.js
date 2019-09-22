@@ -1,7 +1,7 @@
 const path = require('path')
+const editor = require('./editor')
+const parser = require('./parser')
 const { HELPDIR, hash } = require('./utils')
-const { init } = require('./editor')
-const schelp = require('./parser')
 
 const docs = document.querySelector('#docs')
 const backButton = document.querySelector('#browser #back')
@@ -44,26 +44,26 @@ async function load (url) {
   let html = cache[url]
   if (html) {
     docs.innerHTML = html
-    const snippets = document.querySelectorAll('#docs textarea')
-    snippets.forEach(init)
+    const snippets = docs.querySelectorAll('#docs textarea')
+    snippets.forEach(editor.init)
     return scroll(anchor)
   }
   try {
     const filePath = path.resolve(HELPDIR, `${file}.schelp`)
-    const response = await fetch(filePath)
+    const response = await window.fetch(filePath)
     const text = await response.text()
-    html = schelp.parse(text, url)
+    html = parser.parse(text, url)
   } catch (error) {
     html = error
   }
   docs.innerHTML = cache[url] = html
-  const snippets = document.querySelectorAll('#docs textarea')
-  snippets.forEach(init)
+  const snippets = docs.querySelectorAll('#docs textarea')
+  snippets.forEach(editor.init)
   scroll(anchor)
 }
 
 function scroll (anchor) {
-  const id = anchor && hash(anchor.replace(/^[.\-*]/, '')) || 'docs'
+  const id = anchor ? hash(anchor.replace(/^[.\-*]/, '')) : 'docs'
   const el = document.getElementById(id)
   el.scrollIntoView()
 }

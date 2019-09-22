@@ -1,6 +1,4 @@
-// Modules to control application life and create native browser window
-const { app, shell, BrowserWindow } = require('electron')
-const path = require('path')
+const { app, BrowserWindow } = require('electron')
 const supercollider = require('supercolliderjs')
 
 let window
@@ -10,7 +8,6 @@ function createWindow () {
     width: 800,
     height: 600,
     webPreferences: {
-      // preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true
     }
   })
@@ -49,10 +46,10 @@ async function boot () {
       debug: false
     })
   } catch (err) {
-    console.log('err', err);
+    console.log('err', err)
   }
   await sclang.interpret(`
-    s.boot;
+    s.boot
   `)
   return sclang
 }
@@ -64,9 +61,8 @@ async function evaluate (code) {
     result = result.string ? result.string : String(result)
   } catch (error) {
     result = error.message
-  } finally {
-    return result
   }
+  return result
 }
 
 async function start () {

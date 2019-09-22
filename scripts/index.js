@@ -27,7 +27,7 @@ document.addEventListener('click', (event) => {
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'q' && event.metaKey) {
-    if (!confirm('Are you sure?')) {
+    if (!window.confirm('Are you sure?')) {
       event.preventDefault()
     }
   }
@@ -39,5 +39,5 @@ document.addEventListener('keydown', (event) => {
 // help.go('Guides/Multichannel-Expansion')
 // help.go('Reference/Adverbs')
 // help.go('Guides/WritingHelp')
-help.go('Reference/SCDocSyntax')
-// help.go('Classes/HenonC')
+// help.go('Reference/SCDocSyntax')
+help.go('Classes/HenonC')

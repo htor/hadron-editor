@@ -1,9 +1,8 @@
 const CodeMirror = require('codemirror')
 require('codemirror/addon/mode/simple')
 const { evaluate } = require('electron').remote.require('./main.js')
-const fs = require('fs')
-const path = require('path')
 const scd = require('../syntaxes/scd')
+const help = require('./help')
 
 CodeMirror.defineSimpleMode('scd', scd)
 
@@ -13,7 +12,7 @@ function init (textarea) {
     value: textarea.value,
     lineWrapping: true,
     extraKeys: {
-      'Tab': (cm) => cm.replaceSelection('    '),
+      Tab: (cm) => cm.replaceSelection('    '),
       'Cmd-Enter': async () => {
         const result = await evaluate(selectRegion())
         post(result)
@@ -25,7 +24,7 @@ function init (textarea) {
       'Cmd-D': (cm) => {
         const range = cm.findWordAt(cm.getCursor())
         const word = cm.getRange(range.anchor, range.head)
-        lookup(word)
+        help.lookup(word)
       },
       'Cmd-.': async () => {
         post('CmdPeriod.run')
@@ -33,15 +32,13 @@ function init (textarea) {
       }
     }
   })
-  //
 
   editor.on('dblclick', (editor) => {
-    let cursor = editor.getCursor()
-    let parenMatch = editor.getLine(cursor.line)
-        .slice(cursor.ch-1,cursor.ch).match(/[()]/)
-    if (parenMatch) {
-        editor.undoSelection()
-        selectRegion({ flash: false })
+    const cursor = editor.getCursor()
+    const line = editor.getLine(cursor.line)
+    if (line.slice(cursor.ch - 1, cursor.ch).match(/[()]/)) {
+      editor.undoSelection()
+      selectRegion({ flash: false })
     }
   })
 
@@ -60,7 +57,7 @@ function init (textarea) {
 
     function findLeftParen (cursor) {
       const left = editor.findPosH(cursor, -1, 'char')
-      const char = editor.getLine(left.line).slice(left.ch, left.ch+1)
+      const char = editor.getLine(left.line).slice(left.ch, left.ch + 1)
       const token = editor.getTokenTypeAt(cursor) || ''
       if (left.hitSide) return left
       if (token.match(/^(comment|string|symbol|char)/)) return findLeftParen(left)
@@ -71,7 +68,7 @@ function init (textarea) {
 
     function findRightParen (cursor) {
       const right = editor.findPosH(cursor, 1, 'char')
-      const char = editor.getLine(right.line).slice(right.ch-1, right.ch)
+      const char = editor.getLine(right.line).slice(right.ch - 1, right.ch)
       const token = editor.getTokenTypeAt(cursor) || ''
       if (right.hitSide) return right
       if (token.match(/^(comment|string|symbol|char)/)) return findRightParen(right)
@@ -81,10 +78,11 @@ function init (textarea) {
     }
 
     // Adjust cursor before finding parens
-    if (editor.getLine(cursor.line).slice(cursor.ch,cursor.ch+1) === '(')
-      editor.setCursor(Object.assign(cursor, { ch: cursor.ch+1 }))
-    if (editor.getLine(cursor.line).slice(cursor.ch-1,cursor.ch) === ')')
-      editor.setCursor(Object.assign(cursor, { ch: cursor.ch-1 }))
+    if (editor.getLine(cursor.line).slice(cursor.ch, cursor.ch + 1) === '(') {
+      editor.setCursor(Object.assign(cursor, { ch: cursor.ch + 1 }))
+    } else if (editor.getLine(cursor.line).slice(cursor.ch - 1, cursor.ch) === ')') {
+      editor.setCursor(Object.assign(cursor, { ch: cursor.ch - 1 }))
+    }
 
     const parenPairs = []
     let left = findLeftParen(cursor)
@@ -134,21 +132,22 @@ function init (textarea) {
     }
 
     if (options.flash) {
-      let marker = editor.markText(from, to, { className: 'text-flash' })
+      const marker = editor.markText(from, to, { className: 'text-flash' })
       setTimeout(() => marker.clear(), 300)
     }
     return editor.getRange(from, to)
   }
 
-  function post (message) {
-    const lines = document.querySelector('output ul')
-    const line = document.createElement('li')
-    line.textContent = message
-    lines.appendChild(line)
-    line.scrollIntoView()
-  }
-
   return editor
 }
 
+function post (message) {
+  const lines = document.querySelector('output ul')
+  const line = document.createElement('li')
+  line.textContent = message
+  lines.appendChild(line)
+  line.scrollIntoView()
+}
+
 exports.init = init
+exports.post = post

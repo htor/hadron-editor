@@ -1,5 +1,4 @@
 const crypto = require('crypto')
-
 const HELPDIR = '/Applications/SuperCollider/SuperCollider.app/Contents/Resources/HelpSource'
 
 function hash (str) {

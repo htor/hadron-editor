@@ -1,5 +1,5 @@
 function test (any) {
-  let [href, ] = any.split('##')
+  const href = any.split('#').pop()
   return `<a href="${href}" title="${href}">${href}</a>`
 }
 

@@ -2,25 +2,24 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="styles/codemirror.css">
     <link rel="stylesheet" href="styles/index.css">
     <title>sceditor</title>
   </head>
   <body>
     <div class="panels" style="display: flex">
-      <div id="code" class="pane">
+      <div id="editor" class="pane">
         <textarea>{SinOsc.ar}.play</textarea>
       </div>
-      <div id="resize"></div>
-      <div id="browser" class="pane">
+      <div class="resize"></div>
+      <div id="help" class="pane">
         <nav>
           <button id="back" disabled>&larr;</button>
           <button id="forward" disabled>&rarr;</button>
         </nav>
-        <div id="docs"></div>
+        <div id="doc"></div>
       </div>
     </div>
-    <output>
+    <output id="post">
       <ul></ul>
     </output>
     <script src="scripts/index.js"></script>

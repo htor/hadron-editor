@@ -1,11 +1,11 @@
 const { shell } = require('electron')
 const editor = require('./scripts/editor')
 const help = require('./scripts/help')
+const mainEditor = editor.setup(document.querySelector('#editor textarea'))
 
-const main = document.querySelector('#code textarea')
-const code = editor.init(main)
-
-window.addEventListener('resize', () => code.refresh())
+window.addEventListener('resize', () => {
+  mainEditor.refresh()
+})
 
 document.addEventListener('click', (event) => {
   const target = event.target
@@ -36,8 +36,12 @@ document.addEventListener('keydown', (event) => {
 // help.go('Classes/IdentityDictionary')
 // help.go('Guides/Tour_Of_UGens')
 // help.go('Classes/SinOsc')
-// help.go('Guides/Multichannel-Expansion')
+// help.go('Classes/PMOsc')
+help.go('Guides/Multichannel-Expansion')
 // help.go('Reference/Adverbs')
 // help.go('Guides/WritingHelp')
 // help.go('Reference/SCDocSyntax')
-help.go('Classes/HenonC')
+// help.go('Classes/HenonC')
+// help.go('Help')
+
+mainEditor.focus()

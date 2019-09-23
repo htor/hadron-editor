@@ -3,8 +3,8 @@
 # todo
 
 ## interface
-- [ ] output _all_ output from sclang (boot, errors, exit)
-- [ ] output object/array return values from sclang
+- [x] output _all_ output from sclang (boot, errors, exit)
+- [x] output object/array return values from sclang
 - [ ] hide docs, hide output keyboard shortcuts
 - [ ] capture keybindings outside of codemirror and pass them to it
 - [ ] show file name in window title

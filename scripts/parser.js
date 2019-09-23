@@ -5,8 +5,7 @@ const linkify = require('linkify-it')()
 const { HELPDIR, hash } = require('./utils')
 
 const grammar = ohm.grammar(fs.readFileSync('./syntaxes/schelp.ohm', 'utf-8'))
-const doc = { methods: {} }
-const currentMethods = []
+const doc = { methods: {}, currentMethods: [] }
 
 const semantics = grammar.createSemantics().addOperation('emit', {
   Document (ElementOrText) {
@@ -14,7 +13,7 @@ const semantics = grammar.createSemantics().addOperation('emit', {
     if (doc.related) {
       html += `<h2>Related</h2> <p>${doc.related}</p>`
     }
-    const links = linkify.match(html).filter((match) => match.schema)
+    const links = (linkify.match(html) || []).filter((match) => match.schema)
     for (const link of links) {
       const anchor = `<a href="${link.url}" title="${link.url}">${link.text}</a>`
       html = html.replace(link.text, anchor)
@@ -88,23 +87,25 @@ const semantics = grammar.createSemantics().addOperation('emit', {
     for (const name of names) {
       const hashed = hash(name)
       doc.methods[name] = { args: [] }
-      currentMethods.push(name)
+      doc.currentMethods.push(name)
       args = Argument.emit().join(' ')
-      const argslist = doc.methods[name].args.join(', ')
-      methods += `<h3><a id="${hashed}">${name}(${argslist})</a></h3>`
+      const argsList = doc.methods[name].args.join(', ')
+      methods += `<h3><a id="${hashed}">${name}(${argsList})</a></h3>`
     }
+    doc.currentMethods = []
     return `
-    <div>
-      ${methods}
-      ${description}
-      <ul>
-        ${args}
-      </ul>
-    </div>`
+      <div>
+        ${methods}
+        ${description}
+        <ul>
+          ${args}
+        </ul>
+      </div>
+    `
   },
   Argument (tag, line, Paragraph) {
     const name = getMatch(line).trim()
-    for (const currentMethod of currentMethods) {
+    for (const currentMethod of doc.currentMethods) {
       doc.methods[currentMethod].args.push(name)
     }
     return `<li><strong>${name}</strong>: ${Paragraph.emit()}</li>`
@@ -152,7 +153,7 @@ const semantics = grammar.createSemantics().addOperation('emit', {
   Link (tag, any, tagEnd) {
     const [path, anchor] = getMatch(any).split('#')
     const href = anchor ? `${path}#${anchor}` : path
-    const [, title = href] = href.split('/')
+    const title = href.split('/').pop()
     return `<a href="${href}" title="${href}">${title}</a>`
   },
   Anchor (tag, any, tagEnd) {
@@ -183,13 +184,13 @@ const semantics = grammar.createSemantics().addOperation('emit', {
     return getMatch(text)
   },
   codeInline (tag, any, tagEnd) {
-    return `<code>${getMatch(any)}</code>`
+    return `<code>${getMatch(any).trim()}</code>`
   },
   code (tag, any, notEolAndSep, followedByEolAndSep, eol, tagEnd) {
-    return `<textarea>${getMatch(any)}</textarea>`
+    return `<textarea>${getMatch(any).trim()}</textarea>`
   },
   teletypeInline (tag, any, tagEnd) {
-    return `<code>${getMatch(any).replace(/\\::/g, '::')}</code>`
+    return `<code>${getMatch(any).trim()}</code>`
   },
   teletype (tag, any, notEolAndSep, followedByEolAndSep, eol, tagEnd) {
     return `<pre><code>${getMatch(any).trim()}</code></pre>`

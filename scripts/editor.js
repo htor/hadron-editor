@@ -1,12 +1,73 @@
 const CodeMirror = require('codemirror')
 require('codemirror/addon/mode/simple')
-const { evaluate } = require('electron').remote.require('./main.js')
+const sc = require('supercolliderjs')
+const { app, getGlobal } = require('electron').remote
+const { sleep } = require('./utils')
 const scd = require('../syntaxes/scd')
 const help = require('./help')
+const terminal = getGlobal('console')
+let sclang
 
 CodeMirror.defineSimpleMode('scd', scd)
 
-function init (textarea) {
+start()
+
+async function boot () {
+  try {
+    sclang = await sc.lang.boot({
+      stdin: false,
+      echo: false,
+      debug: false
+    })
+  } catch (error) {
+    terminal.log(error)
+    app.exit(1)
+  }
+  sclang.on('stdout', (message) => post(message, false))
+  sclang.on('stderr', terminal.error)
+  await sclang.interpret('s.boot')
+  return sclang
+}
+
+function flatten (value) {
+  if (value === null) return 'nil'
+  if (Array.isArray(value)) return value.map(flatten)
+  if (value.string) return value.string
+  else return value
+}
+
+async function evaluate (code) {
+  let result
+  try {
+    result = await sclang.interpret(code)
+    result = flatten(result)
+  } catch (fail) {
+    const { type, error } = fail
+    result = `${type.replace((m) => m.toUpperCase())}: ${error.msg}`
+    result += `\n  on line ${error.line}, char ${error.charPos}`
+    result += `\n${error.code}`
+  }
+  return result
+}
+
+async function start () {
+  console.log('Booting server...')
+  await boot()
+  await sleep(3000) // Wait for server to become available
+  console.log('Booted server...')
+}
+
+function post (message, isValue = true) {
+  const lines = document.querySelector('output ul')
+  const line = document.createElement('li')
+  message = Array.isArray(message) ? `[${message.join(', ')}]` : message
+  line.classList.toggle('value', isValue)
+  line.innerHTML = `<pre>${message}</pre>`
+  lines.appendChild(line)
+  line.scrollIntoView()
+}
+
+function setup (textarea) {
   const editor = CodeMirror.fromTextArea(textarea, {
     mode: 'scd',
     value: textarea.value,
@@ -27,7 +88,7 @@ function init (textarea) {
         help.lookup(word)
       },
       'Cmd-.': async () => {
-        post('CmdPeriod.run')
+        post('CmdPeriod.run', false)
         await evaluate('CmdPeriod.run')
       }
     }
@@ -137,17 +198,8 @@ function init (textarea) {
     }
     return editor.getRange(from, to)
   }
-
   return editor
 }
 
-function post (message) {
-  const lines = document.querySelector('output ul')
-  const line = document.createElement('li')
-  line.textContent = message
-  lines.appendChild(line)
-  line.scrollIntoView()
-}
-
-exports.init = init
+exports.setup = setup
 exports.post = post

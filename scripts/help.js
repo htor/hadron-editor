@@ -3,9 +3,9 @@ const editor = require('./editor')
 const parser = require('./parser')
 const { HELPDIR, hash } = require('./utils')
 
-const docs = document.querySelector('#docs')
-const backButton = document.querySelector('#browser #back')
-const forwardButton = document.querySelector('#browser #forward')
+const docs = document.querySelector('#help #doc')
+const backButton = document.querySelector('#help button#back')
+const forwardButton = document.querySelector('#help button#forward')
 const cache = {}
 let history = {}
 
@@ -44,8 +44,8 @@ async function load (url) {
   let html = cache[url]
   if (html) {
     docs.innerHTML = html
-    const snippets = docs.querySelectorAll('#docs textarea')
-    snippets.forEach(editor.init)
+    const snippets = docs.querySelectorAll('#help #doc textarea')
+    snippets.forEach(editor.setup)
     return scroll(anchor)
   }
   try {
@@ -57,13 +57,13 @@ async function load (url) {
     html = error
   }
   docs.innerHTML = cache[url] = html
-  const snippets = docs.querySelectorAll('#docs textarea')
-  snippets.forEach(editor.init)
+  const snippets = docs.querySelectorAll('#help #doc textarea')
+  snippets.forEach(editor.setup)
   scroll(anchor)
 }
 
 function scroll (anchor) {
-  const id = anchor ? hash(anchor.replace(/^[.\-*]/, '')) : 'docs'
+  const id = anchor ? hash(anchor.replace(/^[.\-*]/, '')) : 'doc'
   const el = document.getElementById(id)
   el.scrollIntoView()
 }

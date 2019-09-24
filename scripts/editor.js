@@ -23,31 +23,38 @@ async function boot () {
     terminal.log(error)
     app.exit(1)
   }
-  sclang.on('stdout', (message) => post(message, false))
+  sclang.on('stdout', (message) => post(message, 'info'))
   sclang.on('stderr', terminal.error)
   await sclang.interpret('s.boot')
   return sclang
 }
 
-function flatten (value) {
+function stringify (value) {
   if (value === null) return 'nil'
-  if (Array.isArray(value)) return value.map(flatten)
+  if (Array.isArray(value)) return `[ ${value.map(stringify).join(', ')} ]`
   if (value.string) return value.string
-  else return value
+  return String(value).replace('CmdPeriod', '')
 }
 
 async function evaluate (code) {
   let result
   try {
     result = await sclang.interpret(code)
-    result = flatten(result)
   } catch (fail) {
     const { type, error } = fail
-    result = `${type.replace((m) => m.toUpperCase())}: ${error.msg}`
-    result += `\n  on line ${error.line}, char ${error.charPos}`
-    result += `\n${error.code}`
+    if (type === 'SyntaxError') {
+      result = `${type}: ${error.msg}`
+      result += `\n    line: ${error.line}, char: ${error.charPos}`
+      result += `\n${error.code}`
+    } else if (type === 'Error') {
+      const args = error.args.map((arg) => `${arg.class} ${arg.asString}`).join(', ')
+      const receiver = error.receiver
+      result = error.errorString.replace('ERROR', error.class)
+      result += `\n    receiver: ${receiver.asString}, args: [${args}]`
+    }
+    return post(result, 'error')
   }
-  return result
+  post(stringify(result))
 }
 
 async function start () {
@@ -57,11 +64,10 @@ async function start () {
   console.log('Booted server...')
 }
 
-function post (message, isValue = true) {
+function post (message, type = 'value') {
   const lines = document.querySelector('output ul')
   const line = document.createElement('li')
-  message = Array.isArray(message) ? `[${message.join(', ')}]` : message
-  line.classList.toggle('value', isValue)
+  line.classList.add(type)
   line.innerHTML = `<pre>${message}</pre>`
   lines.appendChild(line)
   line.scrollIntoView()
@@ -74,22 +80,13 @@ function setup (textarea) {
     lineWrapping: true,
     extraKeys: {
       Tab: (cm) => cm.replaceSelection('    '),
-      'Cmd-Enter': async () => {
-        const result = await evaluate(selectRegion())
-        post(result)
-      },
-      'Shift-Enter': async () => {
-        const result = await evaluate(selectLine())
-        post(result)
-      },
+      'Cmd-Enter': () => evaluate(selectRegion()),
+      'Shift-Enter': () => evaluate(selectLine()),
+      'Cmd-.': () => evaluate('CmdPeriod.run'),
       'Cmd-D': (cm) => {
         const range = cm.findWordAt(cm.getCursor())
         const word = cm.getRange(range.anchor, range.head)
         help.lookup(word)
-      },
-      'Cmd-.': async () => {
-        post('CmdPeriod.run', false)
-        await evaluate('CmdPeriod.run')
       }
     }
   })

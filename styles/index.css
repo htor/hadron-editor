@@ -3,6 +3,8 @@
 
 :root {
   --color-gray: #dbdbdb;
+  --color-red: #bf0000;
+  --color-green: #007300;
 }
 
 html {
@@ -141,6 +143,6 @@ code {
   margin: 0;
 }
 
-#post li.value {
-  /* color: tomato; */
+#post li.error {
+  color: var(--color-red);
 }

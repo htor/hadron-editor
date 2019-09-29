@@ -48,9 +48,9 @@ document.addEventListener('keydown', (event) => {
       event.preventDefault()
     }
   }
-  if (event.metaKey && event.key === 'b') {
-    sclang.interpret('s.boot')
-  }
+  if (event.metaKey && event.key === 'b') sclang.interpret('s.boot')
+  if (event.metaKey && event.key === 'm') sclang.interpret('s.meter')
+  if (event.metaKey && event.key === 's') sclang.interpret('s.scope')
   if (event.metaKey && event.key === 'o') {
     helpPane.toggleAttribute('hidden')
     const postFull = postPane.classList.toggle('pane--bottom', !helpPane.hidden)

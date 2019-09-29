@@ -1,28 +1,39 @@
 # sc-editor
 
- Editor for [SuperCollider](https://github.com/supercollider/supercollider) build with [supercolliderjs](https://github.com/crucialfelix/supercolliderjs) and [Electron](https://github.com/supercollider/supercollider).
+ Stripped down editor for [SuperCollider](https://github.com/supercollider/supercollider) build with [supercolliderjs](https://github.com/crucialfelix/supercolliderjs) and [Electron](https://github.com/supercollider/supercollider).
 
 # start
 
 First clone this repositiory and navigate into the resulting directory.
 To run this you need to install [NodeJS](https://nodejs.org/en/) on your computer.
-Then with [NPM](https://nodejs.org/en/) do:
+Then with [NPM](https://www.npmjs.com/) do:
 
 ```
 npm install
 npm start
 ```
 
-The application should start and you can type in SuperCollider code.
+The application should start and you can type in SuperCollider code and evaluate it.
 
 
 # usage
+
+There are keyboard shortcuts for common things:
 
 ### cmd+b
 Boot server
 
 ### cmd+enter
 Evaluate code
+
+### cmd+m
+Show server meter
+
+### cmd+s
+Show server scope
+
+### cmd+d
+Lookup help for word under cursor
 
 ### cmd+o
 Show/hide help browser
@@ -62,3 +73,8 @@ Quit application
 - [ ] implement `categories::`
 - [ ] implement `classtree::`
 - [ ] implement `tree::`
+
+
+# license
+
+MIT

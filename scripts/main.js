@@ -1,6 +1,21 @@
+const sc = require('supercolliderjs')
 const { app, BrowserWindow } = require('electron')
 
-let window
+let window, sclang
+
+async function bootServer () {
+  try {
+    sclang = await sc.lang.boot({
+      stdin: false,
+      echo: false,
+      debug: false
+    })
+  } catch (error) {
+    console.error(error)
+    app.exit(1)
+  }
+  exports.sclang = sclang
+}
 
 function createWindow () {
   window = new BrowserWindow({
@@ -17,7 +32,10 @@ function createWindow () {
   })
 }
 
-app.on('ready', createWindow)
+app.on('ready', async () => {
+  await bootServer()
+  createWindow()
+})
 app.on('window-all-closed', () => {
   app.quit()
 })

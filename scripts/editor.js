@@ -1,32 +1,27 @@
 const CodeMirror = require('codemirror')
 require('codemirror/addon/mode/simple')
-const sc = require('supercolliderjs')
-const { app, getGlobal } = require('electron').remote
+const { sclang } = require('electron').remote.require('./main')
 const { sleep } = require('./utils')
 const scd = require('../syntaxes/scd')
 const help = require('./help')
-const terminal = getGlobal('console')
-let sclang
+const output = document.querySelector('#post output')
 
-CodeMirror.defineSimpleMode('scd', scd)
+init()
 
-start()
-
-async function boot () {
-  try {
-    sclang = await sc.lang.boot({
-      stdin: false,
-      echo: false,
-      debug: false
-    })
-  } catch (error) {
-    terminal.log(error)
-    app.exit(1)
-  }
+function init () {
+  CodeMirror.defineSimpleMode('scd', scd)
   sclang.on('stdout', (message) => post(message, 'info'))
-  sclang.on('stderr', terminal.error)
-  await sclang.interpret('s.boot')
-  return sclang
+  sclang.on('stderr', (message) => post(message, 'error'))
+}
+
+async function evaluate (code) {
+  let result
+  try {
+    result = await sclang.interpret(code)
+  } catch (error) {
+    return post(stringifyError(error), 'error')
+  }
+  post(stringify(result))
 }
 
 function stringify (value) {
@@ -36,36 +31,23 @@ function stringify (value) {
   return String(value).replace('CmdPeriod', '')
 }
 
-async function evaluate (code) {
-  let result
-  try {
-    result = await sclang.interpret(code)
-  } catch (fail) {
-    const { type, error } = fail
-    if (type === 'SyntaxError') {
-      result = `${type}: ${error.msg}`
-      result += `\n    line: ${error.line}, char: ${error.charPos}`
-      result += `\n${error.code}`
-    } else if (type === 'Error') {
-      const args = error.args.map((arg) => `${arg.class} ${arg.asString}`).join(', ')
-      const receiver = error.receiver
-      result = error.errorString.replace('ERROR', error.class)
-      result += `\n    receiver: ${receiver.asString}, args: [${args}]`
-    }
-    return post(result, 'error')
+function stringifyError (value) {
+  const { type, error } = value
+  if (type === 'SyntaxError') {
+    value = `${type}: ${error.msg}`
+    value += `\n    line: ${error.line}, char: ${error.charPos}`
+    value += `\n${error.code}`
+  } else if (type === 'Error') {
+    const args = error.args.map((arg) => `${arg.class} ${arg.asString}`).join(', ')
+    const receiver = error.receiver
+    value = error.errorString.replace('ERROR', error.class)
+    value += `\n    receiver: ${receiver.asString}, args: [${args}]`
   }
-  post(stringify(result))
-}
-
-async function start () {
-  console.log('Booting server...')
-  await boot()
-  await sleep(3000) // Wait for server to become available
-  console.log('Booted server...')
+  return value
 }
 
 function post (message, type = 'value') {
-  const lines = document.querySelector('output ul')
+  const lines = output.querySelector('ul')
   const line = document.createElement('li')
   line.classList.add(type)
   line.innerHTML = `<pre>${message}</pre>`
@@ -79,13 +61,13 @@ function setup (textarea) {
     value: textarea.value,
     lineWrapping: true,
     extraKeys: {
-      Tab: (cm) => cm.replaceSelection('    '),
-      'Cmd-Enter': () => evaluate(selectRegion()),
-      'Shift-Enter': () => evaluate(selectLine()),
+      Tab: (editor) => editor.replaceSelection('    '),
+      'Cmd-Enter': () => evaluate(selectRegion(editor)),
+      'Shift-Enter': () => evaluate(selectLine(editor)),
       'Cmd-.': () => evaluate('CmdPeriod.run'),
-      'Cmd-D': (cm) => {
-        const range = cm.findWordAt(cm.getCursor())
-        const word = cm.getRange(range.anchor, range.head)
+      'Cmd-D': (editor) => {
+        const range = editor.findWordAt(editor.getCursor())
+        const word = editor.getRange(range.anchor, range.head)
         help.lookup(word)
       }
     }
@@ -96,7 +78,7 @@ function setup (textarea) {
     const line = editor.getLine(cursor.line)
     if (line.slice(cursor.ch - 1, cursor.ch).match(/[()]/)) {
       editor.undoSelection()
-      selectRegion({ flash: false })
+      selectRegion(editor, false)
     }
   })
 
@@ -104,99 +86,96 @@ function setup (textarea) {
     editor.setSelection(editor.getCursor(), null, { scroll: false })
   })
 
-  // Returns the code selection, line or region
-  function selectRegion (options = { flash: true }) {
-    const range = window.getSelection().getRangeAt(0)
-    const textarea = range.startContainer.parentNode.previousSibling
-    if (!textarea) return
-    const cursor = editor.getCursor()
-
-    if (editor.somethingSelected()) return selectLine(options)
-
-    function findLeftParen (cursor) {
-      const left = editor.findPosH(cursor, -1, 'char')
-      const char = editor.getLine(left.line).slice(left.ch, left.ch + 1)
-      const token = editor.getTokenTypeAt(cursor) || ''
-      if (left.hitSide) return left
-      if (token.match(/^(comment|string|symbol|char)/)) return findLeftParen(left)
-      if (char === ')') return findLeftParen(findLeftParen(left))
-      if (char === '(') return left
-      return findLeftParen(left)
-    }
-
-    function findRightParen (cursor) {
-      const right = editor.findPosH(cursor, 1, 'char')
-      const char = editor.getLine(right.line).slice(right.ch - 1, right.ch)
-      const token = editor.getTokenTypeAt(cursor) || ''
-      if (right.hitSide) return right
-      if (token.match(/^(comment|string|symbol|char)/)) return findRightParen(right)
-      if (char === '(') return findRightParen(findRightParen(right))
-      if (char === ')') return right
-      return findRightParen(right)
-    }
-
-    // Adjust cursor before finding parens
-    if (editor.getLine(cursor.line).slice(cursor.ch, cursor.ch + 1) === '(') {
-      editor.setCursor(Object.assign(cursor, { ch: cursor.ch + 1 }))
-    } else if (editor.getLine(cursor.line).slice(cursor.ch - 1, cursor.ch) === ')') {
-      editor.setCursor(Object.assign(cursor, { ch: cursor.ch - 1 }))
-    }
-
-    const parenPairs = []
-    let left = findLeftParen(cursor)
-    let right = findRightParen(cursor)
-
-    while (!left.hitSide || !right.hitSide) {
-      parenPairs.push([left, right])
-      left = findLeftParen(left)
-      right = findRightParen(right)
-    }
-
-    // No parens found
-    if (parenPairs.length === 0) return selectLine(options)
-
-    const pair = parenPairs.pop()
-    left = pair[0]
-    right = pair[1]
-
-    // Parens are inline
-    if (left.ch > 0) return selectLine(options)
-
-    // Parens are a region
-    if (options.flash) {
-      const marker = editor.markText(left, right, { className: 'text-flash' })
-      setTimeout(() => marker.clear(), 300)
-      return editor.getRange(left, right)
-    } else {
-      editor.addSelection(left, right)
-      return editor.getSelection()
-    }
-  }
-
-  // Returns the code selection or line
-  function selectLine (options = { flash: true }) {
-    const range = window.getSelection().getRangeAt(0)
-    const textarea = range.startContainer.parentNode.previousSibling
-    if (!textarea) return
-    const cursor = editor.getCursor()
-    let from, to
-
-    if (editor.somethingSelected()) {
-      from = editor.getCursor('start')
-      to = editor.getCursor('end')
-    } else {
-      from = { line: cursor.line, ch: 0 }
-      to = { line: cursor.line, ch: editor.getLine(cursor.line).length }
-    }
-
-    if (options.flash) {
-      const marker = editor.markText(from, to, { className: 'text-flash' })
-      setTimeout(() => marker.clear(), 300)
-    }
-    return editor.getRange(from, to)
-  }
   return editor
 }
 
+function selectRegion (editor, markSelection = true) {
+  const cursor = editor.getCursor()
+  const line = editor.getLine(cursor.line)
+
+  function findLeftParen (cursor) {
+    const left = editor.findPosH(cursor, -1, 'char')
+    const char = editor.getLine(left.line).slice(left.ch, left.ch + 1)
+    const token = editor.getTokenTypeAt(cursor) || ''
+    if (left.hitSide) return left
+    if (token.match(/^(comment|string|symbol|char)/)) return findLeftParen(left)
+    if (char === ')') return findLeftParen(findLeftParen(left))
+    if (char === '(') return left
+    return findLeftParen(left)
+  }
+
+  function findRightParen (cursor) {
+    const right = editor.findPosH(cursor, 1, 'char')
+    const char = editor.getLine(right.line).slice(right.ch - 1, right.ch)
+    const token = editor.getTokenTypeAt(cursor) || ''
+    if (right.hitSide) return right
+    if (token.match(/^(comment|string|symbol|char)/)) return findRightParen(right)
+    if (char === '(') return findRightParen(findRightParen(right))
+    if (char === ')') return right
+    return findRightParen(right)
+  }
+
+  if (editor.somethingSelected()) {
+    return selectLine(editor, markSelection)
+  }
+
+  // Adjust cursor before finding parens
+  if (line.slice(cursor.ch, cursor.ch + 1) === '(') {
+    editor.setCursor(Object.assign(cursor, { ch: cursor.ch + 1 }))
+  } else if (line.slice(cursor.ch - 1, cursor.ch) === ')') {
+    editor.setCursor(Object.assign(cursor, { ch: cursor.ch - 1 }))
+  }
+
+  const parenPairs = []
+  let left = findLeftParen(cursor)
+  let right = findRightParen(cursor)
+
+  while (!left.hitSide || !right.hitSide) {
+    parenPairs.push([left, right])
+    left = findLeftParen(left)
+    right = findRightParen(right)
+  }
+
+  // No parens found
+  if (parenPairs.length === 0) {
+    return selectLine(editor, markSelection)
+  }
+
+  const pair = parenPairs.pop()
+  left = pair[0]
+  right = pair[1]
+
+  // Parens are inline
+  if (left.ch > 0) {
+    return selectLine(editor, markSelection)
+  }
+
+  // Parens are a region
+  if (markSelection) {
+    const marker = editor.markText(left, right, { className: 'text-marked' })
+    setTimeout(() => marker.clear(), 300)
+    return editor.getRange(left, right)
+  } else {
+    editor.addSelection(left, right)
+    return editor.getSelection()
+  }
+}
+
+function selectLine (editor, markSelection = true) {
+  const cursor = editor.getCursor()
+  let from, to
+  if (editor.somethingSelected()) {
+    from = editor.getCursor('start')
+    to = editor.getCursor('end')
+  } else {
+    from = { line: cursor.line, ch: 0 }
+    to = { line: cursor.line, ch: editor.getLine(cursor.line).length }
+  }
+  if (markSelection) {
+    const marker = editor.markText(from, to, { className: 'text-marked' })
+    setTimeout(() => marker.clear(), 300)
+  }
+  return editor.getRange(from, to)
+}
+
 exports.setup = setup
-exports.post = post

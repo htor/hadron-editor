@@ -1,15 +1,17 @@
 const path = require('path')
+const { shell } = require('electron')
 const editor = require('./editor')
 const parser = require('./parser')
 const { HELPDIR, hash } = require('./utils')
 
-const docs = document.querySelector('#help #doc')
+const doc = document.querySelector('#help #doc')
 const backButton = document.querySelector('#help button#back')
 const forwardButton = document.querySelector('#help button#forward')
 const cache = {}
 let history = {}
 
 function go (url) {
+  if (url.match(/^https?:/)) return shell.openExternal(href)
   const newHistory = { prev: history, url }
   history.next = newHistory
   history = newHistory
@@ -40,11 +42,11 @@ function lookup (name) {
 async function load (url) {
   const [file, anchor] = url.split('#')
   if (!file && anchor) return scroll(anchor)
-  docs.innerHTML = 'Loading...'
+  doc.innerHTML = 'Loading...'
   let html = cache[url]
   if (html) {
-    docs.innerHTML = html
-    const snippets = docs.querySelectorAll('#help #doc textarea')
+    doc.innerHTML = html
+    const snippets = doc.querySelectorAll('#help #doc textarea')
     snippets.forEach(editor.setup)
     return scroll(anchor)
   }
@@ -56,8 +58,8 @@ async function load (url) {
   } catch (error) {
     html = error
   }
-  docs.innerHTML = cache[url] = html
-  const snippets = docs.querySelectorAll('#help #doc textarea')
+  doc.innerHTML = cache[url] = html
+  const snippets = doc.querySelectorAll('#help #doc textarea')
   snippets.forEach(editor.setup)
   scroll(anchor)
 }

@@ -1,47 +1,67 @@
-const { shell } = require('electron')
+const { sclang } = require('electron').remote.require('./main')
 const editor = require('./scripts/editor')
 const help = require('./scripts/help')
-const mainEditor = editor.setup(document.querySelector('#editor textarea'))
+
+const editPane = document.querySelector('#editor')
+const helpPane = document.querySelector('#help')
+const postPane = document.querySelector('#post')
 
 window.addEventListener('resize', () => {
-  mainEditor.refresh()
+  editor.refresh()
+})
+
+window.addEventListener('mousedown', (event) => {
+  if (event.target !== editPane) return
+  event.preventDefault()
+  const pageWidth = document.body.offsetWidth
+  const flexGrow = 2 / pageWidth
+  function resize (event) {
+    const left = flexGrow * event.clientX
+    const right = pageWidth * flexGrow - left
+    editPane.style.flexGrow = left
+    helpPane.style.flexGrow = right
+    postPane.style.flexGrow = right
+  }
+  window.addEventListener('mousemove', resize)
+  window.addEventListener('mouseup', () => {
+    window.removeEventListener('mousemove', resize)
+  })
 })
 
 document.addEventListener('click', (event) => {
   const target = event.target
-  if (target.tagName === 'A' && target.href && target.closest('#docs')) {
+  if (target.tagName === 'A' && target.href && target.closest('#doc')) {
     event.preventDefault()
-    const link = target
-    const href = link.getAttribute('href')
-    if (href.startsWith('http')) {
-      shell.openExternal(href)
-    } else {
-      help.go(href)
-    }
+    help.go(target.getAttribute('href'))
   } else if (target.tagName === 'BUTTON') {
-    const button = target
-    if (button.id === 'back') help.back()
-    if (button.id === 'forward') help.forward()
+    if (target.id === 'back') help.back()
+    if (target.id === 'forward') help.forward()
   }
 })
 
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'q' && event.metaKey) {
+  if (event.metaKey && event.key === 'q') {
     if (!window.confirm('Are you sure?')) {
       event.preventDefault()
     }
   }
+  if (event.metaKey && event.key === 'b') {
+    sclang.interpret('s.boot')
+  }
+  if (event.metaKey && event.key === 'o') {
+    helpPane.toggleAttribute('hidden')
+    const postFull = postPane.classList.toggle('pane--bottom', !helpPane.hidden)
+    editPane.classList.toggle('pane--full', postFull)
+    postPane.classList.toggle('pane--full', helpPane.hidden)
+  }
+  if (event.metaKey && event.key === 'p') {
+    postPane.toggleAttribute('hidden')
+    editPane.classList.toggle('pane--full', postPane.hidden)
+    helpPane.classList.toggle('pane--full', postPane.hidden)
+    postPane.classList.toggle('pane--full', helpPane.hidden)
+  }
 })
 
-// help.go('Classes/IdentityDictionary')
-// help.go('Guides/Tour_Of_UGens')
-// help.go('Classes/SinOsc')
-// help.go('Classes/PMOsc')
-help.go('Guides/Multichannel-Expansion')
-// help.go('Reference/Adverbs')
-// help.go('Guides/WritingHelp')
-// help.go('Reference/SCDocSyntax')
-// help.go('Classes/HenonC')
-// help.go('Help')
-
+const mainEditor = editor.setup(editPane.querySelector('textarea'))
 mainEditor.focus()
+help.go('Guides/Multichannel-Expansion')

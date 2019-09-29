@@ -11,14 +11,14 @@
   background: rgba(0, 255, 107, 0.31) !important;
 }
 
-@keyframes text-flash {
+@keyframes text-marked {
   0% { background: rgba(0, 255, 107, 0) }
   20% { background: rgba(0, 255, 107, .5) }
   100% { background: rgba(0, 255, 107, 0) }
 }
 
-.CodeMirror .text-flash {
-  animation: text-flash .3s ease-in;
+.CodeMirror .text-marked {
+  animation: text-marked .3s ease-in;
 }
 
 .cm-s-default .cm-keyword { color: #0000e6; }

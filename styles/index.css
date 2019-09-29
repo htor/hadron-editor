@@ -24,10 +24,14 @@ code {
   margin: 0;
 }
 
+.panes {
+  display: flex;
+}
+
 .pane {
   position: relative;
   flex: 1;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 150px);
   overflow-y: scroll;
 }
 
@@ -35,10 +39,10 @@ code {
   border-left: 1px solid var(--color-gray);
 }
 
-.pane::after {
+.pane:first-child::after {
   content: '';
   position: absolute;
-  right: -2px;
+  right: 0;
   top: 0;
   bottom: 0;
   height: 100%;
@@ -55,19 +59,8 @@ code {
   bottom: 0;
   right: 0;
   left: 0;
-  height: 100px;
+  height: 150px;
   border-top: 1px solid var(--color-gray);
-}
-
-.pane--bottom::after {
-  content: '';
-  position: absolute;
-  top: -4px;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: 10px;
-  cursor: row-resize;
 }
 
 #help nav {

@@ -5,9 +5,12 @@ const help = require('./scripts/help')
 const editPane = document.querySelector('#editor')
 const helpPane = document.querySelector('#help')
 const postPane = document.querySelector('#post')
+const mainEditor = editor.setup(editPane.querySelector('textarea'))
+mainEditor.focus()
+help.go('Guides/Multichannel-Expansion')
 
 window.addEventListener('resize', () => {
-  editor.refresh()
+  mainEditor.refresh()
 })
 
 window.addEventListener('mousedown', (event) => {
@@ -61,7 +64,3 @@ document.addEventListener('keydown', (event) => {
     postPane.classList.toggle('pane--full', helpPane.hidden)
   }
 })
-
-const mainEditor = editor.setup(editPane.querySelector('textarea'))
-mainEditor.focus()
-help.go('Guides/Multichannel-Expansion')

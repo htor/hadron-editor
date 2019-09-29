@@ -1,6 +1,6 @@
 # sc-editor
 
- Stripped down editor for [SuperCollider](https://github.com/supercollider/supercollider) build with [supercolliderjs](https://github.com/crucialfelix/supercolliderjs) and [Electron](https://github.com/supercollider/supercollider).
+ Stripped down editor for [SuperCollider](https://github.com/supercollider/supercollider) built with [supercolliderjs](https://github.com/crucialfelix/supercolliderjs) and [Electron](https://electronjs.org/docs).
 
 # start
 

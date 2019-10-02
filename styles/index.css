@@ -24,6 +24,32 @@ code {
   margin: 0;
 }
 
+#loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  color: red;
+  background: white;
+  z-index: 5;
+}
+
+#loading div {
+  position: absolute;
+  top: calc(50% - 75px);
+  left: calc(50% - 75px);
+  width: 150px;
+  height: 150px;
+  background: tomato;
+  transition: .2s opacity;
+  animation: 1s linear spin infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg) }
+}
+
 .panes {
   display: flex;
 }
@@ -31,12 +57,12 @@ code {
 .pane {
   position: relative;
   flex: 1;
-  height: calc(100vh - 150px);
+  height: 100vh;
   overflow-y: scroll;
 }
 
-.pane:not(:first-child) {
-  border-left: 1px solid var(--color-gray);
+.pane:first-child {
+  border-right: 1px solid var(--color-gray);
 }
 
 .pane:first-child::after {
@@ -50,24 +76,33 @@ code {
   cursor: col-resize;
 }
 
-.pane--full {
-  height: 100vh;
+#split {
+  display: flex;
+  flex-direction: column;
 }
 
-.pane--bottom {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  height: 150px;
-  border-top: 1px solid var(--color-gray);
+#help,
+#post {
+  flex: 1;
+  overflow-y: auto;
+}
+
+#help {
+  position: relative;
+  border-bottom: 1px solid var(--color-gray);
+}
+
+#help iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 #help nav {
-  position: fixed;
-  top: .5em;
+  position: absolute;
+  top: .3em;
   left: 50%;
-  right: 1em;
+  right: .8em;
   text-align: right;
   pointer-events: none;
   z-index: 1;
@@ -79,70 +114,13 @@ code {
   user-select: none;
   background: none;
   padding: .3rem;
-  font-size: 1em;
+  font-family: inherit;
+  font-size: 13px;
+  color: #c1c1c1;
   cursor: pointer;
   pointer-events: auto;
   outline: 0;
   border: 0;
-}
-
-#help #doc {
-  padding: 1rem;
-}
-
-#help ul {
-  padding-left: 2em;
-}
-
-#help h1,
-#help h2 {
-  padding-bottom: .6rem;
-  border-bottom: 1px solid var(--color-gray);
-}
-
-#help h1 {
-  font-size: 2.8rem;
-  margin-top: .6rem;
-}
-
-#help h2 {
-  font-size: 2rem;
-}
-
-#help blockquote {
-  margin-left: 0;
-}
-
-#help dt {
-  font-weight: bold;
-}
-
-#help table {
-  margin: 1rem;
-  border-collapse: collapse;
-}
-
-#help td {
-  padding: .5rem;
-  border: 1px solid;
-}
-
-#help img {
-  max-width: 100%;
-}
-
-#help code,
-#help pre:not(.CodeMirror-line) {
-  background: #e8e8e8;
-  overflow-x: auto;
-}
-
-#help .CodeMirror {
-  height: auto;
-}
-
-#help a:not([href]) {
-  padding-top: .8rem;
 }
 
 #post output {

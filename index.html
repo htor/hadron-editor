@@ -10,17 +10,22 @@
       <div class="pane" id="editor">
         <textarea>{SinOsc.ar}.play</textarea>
       </div>
-      <div class="pane" id="help">
-        <nav>
-          <button id="back" disabled>&larr;</button>
-          <button id="forward" disabled>&rarr;</button>
-        </nav>
-        <div id="doc"></div>
-      </div>
-      <div class="pane pane--bottom" id="post">
-        <output>
-          <ul></ul>
-        </output>
+      <div class="pane" id="split">
+        <div id="help">
+          <nav>
+            <button id="back">Back</button>
+            <button id="forward">Forward</button>
+          </nav>
+          <!-- <div id="loading">
+            <div></div>
+          </div> -->
+          <iframe src="file:///Users/n642275/Library/Application%20Support/SuperCollider/Help/Classes/SinOsc.html"></iframe>
+        </div>
+        <div id="post">
+          <output>
+            <ul></ul>
+          </output>
+        </div>
       </div>
     </div>
     <script src="scripts/index.js"></script>

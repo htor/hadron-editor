@@ -1,0 +1,148 @@
+:root {
+  --color-gray: #dbdbdb;
+  --color-red: #bf0000;
+  --color-green: #007300;
+}
+
+body {
+  font-family: inconsolata, monospace;
+  font-size: 16px;
+}
+
+:target {
+  border: 0;
+  padding-top: 32px;
+}
+
+:focus {
+  outline: none;
+}
+
+::selection {
+  background: tomato;
+  color: white;
+}
+
+#menubar {
+  background: white;
+  border-bottom: 1px solid var(--color-gray);
+  box-shadow: none;
+}
+
+#menubar .menuitem {
+  border: 0;
+}
+
+#menubar .menuitem:first-child {
+  background: none;
+}
+
+#menubar .menuitem:first-child a {
+  padding-left: 1rem;
+}
+
+#menubar .menuitem a.home span {
+  display: inline-block;
+}
+
+a.menu-link {
+  padding: 0;
+  margin: 0 1rem 0 0;
+}
+
+#label,
+#toc-container,
+#menubar .menuitem {
+  font-size: 13px;
+}
+
+#toc,
+.submenu {
+  background: white;
+  top: 32px;
+  border-top: 0;
+}
+
+#toc-container {
+  display: none;
+}
+
+#summary {
+  font: inherit;
+  font-style: normal;
+  opacity: .8;
+}
+
+h1 {
+  margin-top: 1rem;
+}
+
+h2, h3, h4 {
+  padding-bottom: .4rem;
+}
+
+a[href],
+a[href]:hover {
+  color: #c1c1c1;
+}
+
+textarea {
+  display: block;
+  opacity: 1;
+}
+
+
+code,
+pre:not(.CodeMirror-line) {
+  background: #e8e8e8;
+  overflow-x: auto;
+}
+
+.CodeMirror {
+  height: auto;
+  z-index: 1;
+}
+
+
+.method-code {
+  font: inherit;
+}
+
+a.method-name::before {
+  display: none;
+}
+
+.subheader {
+  padding: 1rem 0;
+}
+
+.subheader,
+#superclasses {
+  font: inherit;
+  margin: 0;
+}
+
+.note,
+.warning,
+.searchlink {
+  background: #eeee;
+}
+
+.warninglabel {
+  color: inherit;
+}
+
+#search_input {
+  -webkit-appearance: none;
+  padding: .3rem 0.6rem;
+  font: inherit;
+  background: #f7f7f7;
+}
+
+.cat_selected {
+  border: 0;
+}
+
+.cat_arrow {
+  display: none;
+}

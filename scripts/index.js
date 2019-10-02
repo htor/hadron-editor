@@ -1,19 +1,81 @@
+const fs = require('fs')
 const { sclang } = require('electron').remote.require('./main')
 const editor = require('./scripts/editor')
-const help = require('./scripts/help')
 
+// const loading = document.querySelector('#loading')
 const editPane = document.querySelector('#editor')
 const helpPane = document.querySelector('#help')
 const postPane = document.querySelector('#post')
-const mainEditor = editor.setup(editPane.querySelector('textarea'))
+let mainEditor
+
+editor.setup()
+mainEditor = editor.attach(editPane.querySelector('textarea'))
 mainEditor.focus()
-help.go('Guides/Multichannel-Expansion')
+
+// setTimeout(() => {
+//   loading.setAttribute('hidden', '')
+// }, 200)
+
+const styles = document.createElement('style')
+styles.textContent = fs.readFileSync('./styles/codemirror.css', 'utf-8')
+styles.textContent += fs.readFileSync('./styles/editor.css', 'utf-8')
+styles.textContent += fs.readFileSync('./styles/help.css', 'utf-8')
+const iframe = helpPane.querySelector('iframe')
+
+window.addEventListener('mousedown', mousedown)
+document.addEventListener('keydown', keydown)
+document.addEventListener('click', click)
+
+iframe.addEventListener('load', () => {
+  console.log('loading', iframe.src)
+  const win = iframe.contentWindow
+  const doc = iframe.contentDocument
+  win.addEventListener('unload', () => {
+    // loading.removeAttribute('hidden')
+  })
+
+  // fix menubar dropdown linx
+  const dropdowns = doc.querySelectorAll('.menu-link[href="#"]')
+  dropdowns.forEach((dropdown) => dropdown.textContent = dropdown.textContent.replace('▼', ''))
+
+  doc.querySelectorAll('#folder').forEach((folder) => folder.nextSibling ? folder.nextSibling.textContent = ' > ' : '')
+
+  // move subheader to bottom related
+  doc.querySelectorAll('.doclink').forEach((el) => el.remove())
+  const subheader = doc.querySelector('.subheader')
+  if (subheader && subheader.children.length) {
+    const contents = doc.querySelector('.contents')
+    const h2 = doc.createElement('h2')
+    subheader.remove()
+    h2.textContent = 'Related'
+    contents.appendChild(h2)
+    contents.appendChild(subheader)
+  }
+
+  // move superclasses to bottom related
+  const superclasses = doc.querySelector('#superclasses')
+  if (superclasses) {
+    superclasses.remove()
+    superclasses.innerHTML = 'Superclasses: ' + superclasses.innerHTML
+    subheader.appendChild(superclasses)
+  }
+
+  // setup code blocks
+  doc.head.querySelectorAll('link[href="./../codemirror.css"]').forEach((el) => el.remove())
+  doc.head.querySelectorAll('link[href="./../editor.css"]').forEach((el) => el.remove())
+  doc.querySelectorAll('.CodeMirror').forEach((el) => el.remove())
+  doc.querySelectorAll('textarea').forEach(editor.attach)
+
+  doc.head.appendChild(styles)
+
+  doc.addEventListener('keydown', keydown)
+})
 
 window.addEventListener('resize', () => {
   mainEditor.refresh()
 })
 
-window.addEventListener('mousedown', (event) => {
+function mousedown (event) {
   if (event.target !== editPane) return
   event.preventDefault()
   const pageWidth = document.body.offsetWidth
@@ -29,20 +91,17 @@ window.addEventListener('mousedown', (event) => {
   window.addEventListener('mouseup', () => {
     window.removeEventListener('mousemove', resize)
   })
-})
+}
 
-document.addEventListener('click', (event) => {
+function click (event) {
   const target = event.target
-  if (target.tagName === 'A' && target.href && target.closest('#doc')) {
-    event.preventDefault()
-    help.go(target.getAttribute('href'))
-  } else if (target.tagName === 'BUTTON') {
-    if (target.id === 'back') help.back()
-    if (target.id === 'forward') help.forward()
+  if (target.tagName === 'BUTTON') {
+    if (target.id === 'back') iframe.contentWindow.history.back()
+    if (target.id === 'forward') iframe.contentWindow.history.forward()
   }
-})
+}
 
-document.addEventListener('keydown', (event) => {
+function keydown (event) {
   if (event.metaKey && event.key === 'q') {
     if (!window.confirm('Are you sure?')) {
       event.preventDefault()
@@ -63,4 +122,4 @@ document.addEventListener('keydown', (event) => {
     helpPane.classList.toggle('pane--full', postPane.hidden)
     postPane.classList.toggle('pane--full', helpPane.hidden)
   }
-})
+}

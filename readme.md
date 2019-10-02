@@ -51,29 +51,12 @@ Quit application
 - [x] output _all_ output from sclang (boot, errors, exit)
 - [x] output object/array return values from sclang
 - [x] hide docs, hide output keyboard shortcuts
-- [ ] show file name in window title
-- [ ] implement save file, open file (drag n drop)
-- [x] make panels resizable by dragging
+- [ ] make panels resizable by dragging
+- [ ] auto-complete classes + methods
+- [ ] limit post window history for better perf
 - [ ] log errors to file
 - [ ] settings
-
-## docs
-- [x] render commalist methods
-- [x] add syntax highlighting to code blocks
-- [x] render methods arguments inline
-- [ ] render default method argument values inline
-- [x] make links in docs work
-  - [x] basic schelp links
-  - [x] support external links + open in default browser
-  - [x] anchors
-- [ ] search function
-- [ ] `copymethod::` -> see `Classes/Array`
-- [ ] `keyword::`?
-- [ ] implement `footnote::`
-- [ ] implement `categories::`
-- [ ] implement `classtree::`
-- [ ] implement `tree::`
-
+- [ ] new file, open file (drag n drop), saving, window title
 
 # license
 

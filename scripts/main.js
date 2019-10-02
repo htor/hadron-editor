@@ -1,9 +1,9 @@
 const sc = require('supercolliderjs')
 const { app, BrowserWindow } = require('electron')
+let mainWindow
 
-let window, sclang
-
-async function bootServer () {
+async function bootSclang () {
+  let sclang
   try {
     sclang = await sc.lang.boot({
       stdin: false,
@@ -14,33 +14,39 @@ async function bootServer () {
     console.error(error)
     app.exit(1)
   }
-  exports.sclang = sclang
+  return sclang
 }
 
 function createWindow () {
-  window = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      webSecurity: false
     }
   })
-  window.loadFile('index.html')
-  window.webContents.openDevTools()
-  window.on('closed', () => {
-    window = null
+  mainWindow.loadFile('index.html')
+  mainWindow.webContents.openDevTools()
+  mainWindow.on('closed', () => {
+    mainWindow = null
   })
 }
 
+app.commandLine.appendSwitch('disable-site-isolation-trials')
+
 app.on('ready', async () => {
-  await bootServer()
+  const sclang = await bootSclang()
+  exports.sclang = sclang
   createWindow()
 })
+
 app.on('window-all-closed', () => {
   app.quit()
 })
+
 app.on('activate', () => {
-  if (window === null) {
+  if (mainWindow === null) {
     createWindow()
   }
 })

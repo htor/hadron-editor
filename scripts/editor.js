@@ -1,15 +1,11 @@
+const { sclang } = require('electron').remote.require('./main')
 const CodeMirror = require('codemirror')
 require('codemirror/addon/mode/simple')
-const { sclang } = require('electron').remote.require('./main')
-const { sleep } = require('./utils')
-const scd = require('../syntaxes/scd')
-const help = require('./help')
+const syntax = require('./syntax.js')
 const output = document.querySelector('#post output')
 
-init()
-
-function init () {
-  CodeMirror.defineSimpleMode('scd', scd)
+function setup () {
+  CodeMirror.defineSimpleMode('scd', syntax)
   sclang.on('stdout', (message) => post(message, 'info'))
   sclang.on('stderr', (message) => post(message, 'error'))
 }
@@ -55,7 +51,7 @@ function post (message, type = 'value') {
   line.scrollIntoView()
 }
 
-function setup (textarea) {
+function attach (textarea) {
   const editor = CodeMirror.fromTextArea(textarea, {
     mode: 'scd',
     value: textarea.value,
@@ -68,7 +64,7 @@ function setup (textarea) {
       'Cmd-D': (editor) => {
         const range = editor.findWordAt(editor.getCursor())
         const word = editor.getRange(range.anchor, range.head)
-        help.lookup(word)
+        // help.lookup(word)
       }
     }
   })
@@ -179,3 +175,4 @@ function selectLine (editor, markSelection = true) {
 }
 
 exports.setup = setup
+exports.attach = attach

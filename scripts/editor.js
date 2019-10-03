@@ -1,6 +1,9 @@
 const { sclang } = require('electron').remote.require('./main')
 const CodeMirror = require('codemirror')
 require('codemirror/addon/mode/simple')
+require('codemirror/addon/edit/matchbrackets')
+require('codemirror/addon/edit/closebrackets')
+require('codemirror/addon/comment/comment')
 const syntax = require('./syntax.js')
 const output = document.querySelector('#post output')
 
@@ -9,6 +12,44 @@ function setup () {
   sclang.on('stdout', (message) => post(message, 'info'))
   sclang.on('stderr', (message) => post(message, 'error'))
 }
+
+function attach (textarea) {
+  const editor = CodeMirror.fromTextArea(textarea, {
+    mode: 'scd',
+    value: textarea.value,
+    lineWrapping: true,
+    matchBrackets: true,
+    autoCloseBrackets: true,
+    extraKeys: {
+      Tab: () => editor.replaceSelection('  '),
+      'Cmd-Enter': () => evaluate(selectRegion(editor)),
+      'Shift-Enter': () => evaluate(selectLine(editor)),
+      'Shift-Cmd-K': () => editor.toggleComment(),
+      'Cmd-.': () => evaluate('CmdPeriod.run'),
+      'Cmd-D': () => {
+        const range = editor.findWordAt(editor.getCursor())
+        const word = editor.getRange(range.anchor, range.head)
+        // help.lookup(word)
+      }
+    }
+  })
+
+  editor.on('dblclick', (editor) => {
+    const cursor = editor.getCursor()
+    const line = editor.getLine(cursor.line)
+    if (line.slice(cursor.ch - 1, cursor.ch).match(/[()]/)) {
+      editor.undoSelection()
+      selectRegion(editor, false)
+    }
+  })
+
+  editor.on('blur', (editor) => {
+    editor.setSelection(editor.getCursor(), null, { scroll: false })
+  })
+
+  return editor
+}
+
 
 async function evaluate (code) {
   let result
@@ -49,40 +90,6 @@ function post (message, type = 'value') {
   line.innerHTML = `<pre>${message}</pre>`
   lines.appendChild(line)
   line.scrollIntoView()
-}
-
-function attach (textarea) {
-  const editor = CodeMirror.fromTextArea(textarea, {
-    mode: 'scd',
-    value: textarea.value,
-    lineWrapping: true,
-    extraKeys: {
-      Tab: (editor) => editor.replaceSelection('    '),
-      'Cmd-Enter': () => evaluate(selectRegion(editor)),
-      'Shift-Enter': () => evaluate(selectLine(editor)),
-      'Cmd-.': () => evaluate('CmdPeriod.run'),
-      'Cmd-D': (editor) => {
-        const range = editor.findWordAt(editor.getCursor())
-        const word = editor.getRange(range.anchor, range.head)
-        // help.lookup(word)
-      }
-    }
-  })
-
-  editor.on('dblclick', (editor) => {
-    const cursor = editor.getCursor()
-    const line = editor.getLine(cursor.line)
-    if (line.slice(cursor.ch - 1, cursor.ch).match(/[()]/)) {
-      editor.undoSelection()
-      selectRegion(editor, false)
-    }
-  })
-
-  editor.on('blur', (editor) => {
-    editor.setSelection(editor.getCursor(), null, { scroll: false })
-  })
-
-  return editor
 }
 
 function selectRegion (editor, markSelection = true) {

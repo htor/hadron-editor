@@ -27,24 +27,27 @@ code {
   height: 100%;
   padding: 1em;
   font: inherit;
+  cursor: text;
 }
 
 .CodeMirror-selected,
 .CodeMirror-line::selection,
 .CodeMirror-line > span::selection,
 .CodeMirror-line > span > span::selection {
-  color: white;
+  color: white !important;
   background: tomato !important;
 }
 
-@keyframes text-marked {
-  0% { color: white; background: tomato }
-  20% { color: white; background: tomato }
-  100% { color: white; background: tomato }
+.CodeMirror-matchingbracket {
+  color: tomato !important;
 }
 
-.CodeMirror .text-marked {
-  animation: text-marked .3s ease-in;
+.text-marked {
+  animation: text-marked .3s ease-out;
+}
+
+@keyframes text-marked {
+  50% { color: white; background: tomato }
 }
 
 .cm-s-default .cm-keyword { color: #0000e6; }

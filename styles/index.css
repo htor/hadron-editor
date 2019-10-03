@@ -35,12 +35,12 @@
 .pane {
   position: relative;
   flex: 1;
+  overflow-y: auto;
 }
 
 #left.pane,
 #right.pane {
   height: 100vh;
-  overflow-y: scroll;
 }
 
 #left.pane::after {
@@ -64,12 +64,6 @@
   visibility: hidden;
 }
 
-#help.pane,
-#post.pane {
-  flex: 1;
-  overflow-y: auto;
-}
-
 #help.pane {
   border-bottom: 1px solid var(--color-gray);
 }
@@ -85,6 +79,10 @@
 
 #post.pane {
   flex-grow: 0.33333;
+}
+
+#post.pane--full {
+  flex-grow: 1;
 }
 
 #help iframe {

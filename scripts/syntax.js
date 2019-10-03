@@ -1,4 +1,4 @@
-const scd = {
+const syntax = {
   start: [
     { regex: /^\s+/, token: 'whitespace' },
     { regex: /^(?:arg|classvar|const|super|this|var)\b/, token: 'keyword' },
@@ -24,7 +24,12 @@ const scd = {
   comment: [
     { regex: /\*\//, pop: true, token: 'comment multi-line-comment' },
     { regex: /./, token: 'comment multi-line-comment' }
-  ]
+  ],
+  meta: {
+    lineComment: '//',
+    blockCommentStart: '/*',
+    blockCommentEnd: '*/'
+  }
 }
 
-module.exports = scd
+module.exports = syntax

@@ -108,8 +108,8 @@ a.method-name::before {
   display: none;
 }
 
-.subheader {
-  padding: 1rem 0;
+.subheader :first-child {
+  padding-top: 1rem;
 }
 
 .subheader,

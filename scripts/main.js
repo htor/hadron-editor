@@ -1,10 +1,9 @@
 const fs = require('fs')
 const sc = require('supercolliderjs')
 const { app, BrowserWindow } = require('electron')
-let mainWindow
+let mainWindow, sclang
 
 async function bootSclang () {
-  let sclang
   try {
     sclang = await sc.lang.boot({
       stdin: false,
@@ -15,7 +14,6 @@ async function bootSclang () {
     console.error(error)
     app.exit(1)
   }
-  return sclang
 }
 
 function symlinkStyle () {
@@ -35,7 +33,6 @@ function createWindow () {
     }
   })
   mainWindow.loadFile('index.html')
-  mainWindow.webContents.openDevTools()
   mainWindow.on('closed', () => {
     mainWindow = null
   })
@@ -44,18 +41,22 @@ function createWindow () {
 app.commandLine.appendSwitch('disable-site-isolation-trials')
 
 app.on('ready', async () => {
-  const sclang = await bootSclang()
+  await bootSclang()
   exports.sclang = sclang
   symlinkStyle()
   createWindow()
-})
-
-app.on('window-all-closed', () => {
-  app.quit()
 })
 
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+app.on('window-all-closed', async () => {
+  mainWindow = null
+})
+
+app.on('quit', async () => {
+  await sclang.interpret('s.quit')
 })

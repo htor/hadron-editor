@@ -47,7 +47,6 @@ Quit application
 
 # todo
 
-## interface
 - [x] output _all_ output from sclang (boot, errors, exit)
 - [x] output object/array return values from sclang
 - [x] hide docs, hide output keyboard shortcuts

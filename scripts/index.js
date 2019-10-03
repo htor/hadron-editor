@@ -25,6 +25,7 @@ window.addEventListener('resize', onResize)
 document.addEventListener('keydown', onKeydown)
 document.addEventListener('click', onClick)
 iframe.addEventListener('load', onLoad)
+iframe.src = 'file:///Users/n642275/Library/Application%20Support/SuperCollider/Help/Help.html'
 
 function onLoad () {
   console.log('loaded', iframe.src)
@@ -72,7 +73,7 @@ function onLoad () {
   styles.href = process.cwd() + '/styles/help.css'
   doc.head.appendChild(styles)
 
-  doc.addEventListener('onkeydown', onKeydown)
+  doc.addEventListener('keydown', onKeydown)
 }
 
 function onMousedown (event) {
@@ -110,10 +111,12 @@ function onKeydown (event) {
   if (event.metaKey && event.key === 'o') {
     helpPane.toggleAttribute('hidden')
     rightPane.toggleAttribute('hidden', helpPane.hidden && postPane.hidden)
+    postPane.classList.toggle('pane--full', helpPane.hidden && !postPane.hidden)
   }
   if (event.metaKey && event.key === 'p') {
     postPane.toggleAttribute('hidden')
     rightPane.toggleAttribute('hidden', helpPane.hidden && postPane.hidden)
+    postPane.classList.toggle('pane--full', helpPane.hidden && !postPane.hidden)
   }
 }
 

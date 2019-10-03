@@ -1,17 +1,16 @@
-const { sclang } = require('electron').remote.require('./main')
 const CodeMirror = require('codemirror')
 require('codemirror/addon/mode/simple')
 require('codemirror/addon/edit/matchbrackets')
 require('codemirror/addon/edit/closebrackets')
 require('codemirror/addon/comment/comment')
+const { sclang } = require('electron').remote.require('./main')
+const { APPSUPPORT_DIR } = require('./common')
 const syntax = require('./syntax.js')
 const output = document.querySelector('#post output')
 
-function setup () {
-  CodeMirror.defineSimpleMode('scd', syntax)
-  sclang.on('stdout', (message) => post(message, 'info'))
-  sclang.on('stderr', (message) => post(message, 'error'))
-}
+CodeMirror.defineSimpleMode('scd', syntax)
+sclang.on('stdout', (message) => post(message, 'info'))
+sclang.on('stderr', (message) => post(message, 'error'))
 
 function attach (textarea) {
   const editor = CodeMirror.fromTextArea(textarea, {
@@ -26,14 +25,9 @@ function attach (textarea) {
       'Shift-Enter': () => evaluate(selectLine(editor)),
       'Shift-Cmd-K': () => editor.toggleComment(),
       'Cmd-.': () => evaluate('CmdPeriod.run'),
-      'Cmd-D': () => {
-        const range = editor.findWordAt(editor.getCursor())
-        const word = editor.getRange(range.anchor, range.head)
-        // help.lookup(word)
-      }
+      'Cmd-D': () => lookupWord(editor)
     }
   })
-
   editor.on('dblclick', (editor) => {
     const cursor = editor.getCursor()
     const line = editor.getLine(cursor.line)
@@ -42,54 +36,35 @@ function attach (textarea) {
       selectRegion(editor, false)
     }
   })
-
   editor.on('blur', (editor) => {
     editor.setSelection(editor.getCursor(), null, { scroll: false })
   })
-
   return editor
 }
 
-
-async function evaluate (code) {
-  let result
-  try {
-    result = await sclang.interpret(code)
-  } catch (error) {
-    return post(stringifyError(error), 'error')
+function lookupWord (editor) {
+  const range = editor.findWordAt(editor.getCursor())
+  const word = editor.getRange(range.anchor, range.head)
+  const first = word.charAt(0)
+  const isUpperCase = first === first.toUpperCase()
+  let page
+  if (!word || word.match(/^\W/)) return
+  if (isUpperCase) {
+    if (docmap[`Classes/${word}`]) {
+      page = `/Classes/${word}.html`
+    } else {
+      page = `/Search.html#${word}`
+    }
+  } else found: {
+    for (const doc in docmap) {
+      if (docmap[doc].methods.find((m) => m.slice(2) === word)) {
+        page = `/Overviews/Methods.html#${word}`;
+        break found;
+      }
+    }
+    page = `/Search.html#${word}`
   }
-  post(stringify(result))
-}
-
-function stringify (value) {
-  if (value === null) return 'nil'
-  if (Array.isArray(value)) return `[ ${value.map(stringify).join(', ')} ]`
-  if (value.string) return value.string
-  return String(value).replace('CmdPeriod', '')
-}
-
-function stringifyError (value) {
-  const { type, error } = value
-  if (type === 'SyntaxError') {
-    value = `${type}: ${error.msg}`
-    value += `\n    line: ${error.line}, char: ${error.charPos}`
-    value += `\n${error.code}`
-  } else if (type === 'Error') {
-    const args = error.args.map((arg) => `${arg.class} ${arg.asString}`).join(', ')
-    const receiver = error.receiver
-    value = error.errorString.replace('ERROR', error.class)
-    value += `\n    receiver: ${receiver.asString}, args: [${args}]`
-  }
-  return value
-}
-
-function post (message, type = 'value') {
-  const lines = output.querySelector('ul')
-  const line = document.createElement('li')
-  line.classList.add(type)
-  line.innerHTML = `<pre>${message}</pre>`
-  lines.appendChild(line)
-  line.scrollIntoView()
+  iframe.src = `file://${APPSUPPORT_DIR}${page}`
 }
 
 function selectRegion (editor, markSelection = true) {
@@ -181,5 +156,45 @@ function selectLine (editor, markSelection = true) {
   return editor.getRange(from, to)
 }
 
-exports.setup = setup
+async function evaluate (code) {
+  let result
+  try {
+    result = await sclang.interpret(code)
+  } catch (error) {
+    return post(stringifyError(error), 'error')
+  }
+  post(stringify(result))
+}
+
+function stringify (value) {
+  if (value === null) return 'nil'
+  if (Array.isArray(value)) return `[ ${value.map(stringify).join(', ')} ]`
+  if (value.string) return value.string
+  return String(value).replace('CmdPeriod', '')
+}
+
+function stringifyError (value) {
+  const { type, error } = value
+  if (type === 'SyntaxError') {
+    value = `${type}: ${error.msg}`
+    value += `\n    line: ${error.line}, char: ${error.charPos}`
+    value += `\n${error.code}`
+  } else if (type === 'Error') {
+    const args = error.args.map((arg) => `${arg.class} ${arg.asString}`).join(', ')
+    const receiver = error.receiver
+    value = error.errorString.replace('ERROR', error.class)
+    value += `\n    receiver: ${receiver.asString}, args: [${args}]`
+  }
+  return value
+}
+
+function post (message, type = 'value') {
+  const lines = output.querySelector('ul')
+  const line = document.createElement('li')
+  line.classList.add(type)
+  line.innerHTML = `<pre>${message}</pre>`
+  lines.appendChild(line)
+  line.scrollIntoView()
+}
+
 exports.attach = attach

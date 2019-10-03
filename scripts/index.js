@@ -1,6 +1,6 @@
 const fs = require('fs')
-const codemirrorStyles = require.resolve('codemirror/lib/codemirror.css')
 const { sclang } = require('electron').remote.require('./main')
+const { APPSUPPORT_DIR } = require('./scripts/common')
 const editor = require('./scripts/editor')
 
 // const loading = document.querySelector('#loading')
@@ -9,11 +9,8 @@ const rightPane = document.querySelector('#right')
 const helpPane = document.querySelector('#help')
 const postPane = document.querySelector('#post')
 const iframe = helpPane.querySelector('iframe')
-
-let mainEditor
-
-editor.setup()
-mainEditor = editor.attach(leftPane.querySelector('textarea'))
+const docmapCode = fs.readFileSync(`${APPSUPPORT_DIR.replace('%20', ' ')}/docmap.js`, 'utf-8')
+const mainEditor = editor.attach(leftPane.querySelector('textarea'))
 mainEditor.focus()
 
 // setTimeout(() => {
@@ -25,15 +22,18 @@ window.addEventListener('resize', onResize)
 document.addEventListener('keydown', onKeydown)
 document.addEventListener('click', onClick)
 iframe.addEventListener('load', onLoad)
-iframe.src = 'file:///Users/n642275/Library/Application%20Support/SuperCollider/Help/Help.html'
+iframe.src = `file://${APPSUPPORT_DIR}/Help.html`
+
 
 function onLoad () {
-  console.log('loaded', iframe.src)
   const win = iframe.contentWindow
   const doc = iframe.contentDocument
   win.addEventListener('unload', () => {
     // loading.removeAttribute('hidden')
   })
+
+  // make docmap avalable
+  eval(docmapCode)
 
   // fix menubar dropdown linx
   const dropdowns = doc.querySelectorAll('.menu-link[href="#"]')

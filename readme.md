@@ -1,24 +1,22 @@
 # sc-editor
 
- Stripped down editor for [SuperCollider](https://github.com/supercollider/supercollider) built with [supercolliderjs](https://github.com/crucialfelix/supercolliderjs) and [Electron](https://electronjs.org/docs).
+ Experimental editor for [SuperCollider](https://github.com/supercollider/supercollider) with built-in help browser and post window.
 
 # start
 
-First clone this repositiory and navigate into the resulting directory.
-To run this you need to install [NodeJS](https://nodejs.org/en/) on your computer.
-Then with [NPM](https://www.npmjs.com/) do:
+First you need to install [SuperCollider](https://github.com/supercollider/supercollider) and [NodeJS](https://nodejs.org/en/) on your computer. Then, with [NPM](https://www.npmjs.com/) do:
 
 ```
 npm install
 npm start
 ```
 
-The application should start and you can type in SuperCollider code and evaluate it.
+The application should start and you can type in SuperCollider code and evaluate it with `Cmd+Enter`.
 
 
 # usage
 
-There are keyboard shortcuts for common things:
+Keyboard shortcuts for common actions:
 
 ### cmd+b
 Boot server
@@ -26,11 +24,17 @@ Boot server
 ### cmd+enter
 Evaluate code
 
+### cmd+.
+Stop all audio output
+
 ### cmd+m
 Show server meter
 
 ### cmd+s
 Show server scope
+
+### cmd+shift+k
+Comment/uncomment text selection
 
 ### cmd+d
 Lookup help for word under cursor
@@ -52,12 +56,19 @@ Quit application
 - [x] hide docs, hide output keyboard shortcuts
 - [x] make panels resizable by dragging
 - [ ] auto-indent in editor
-- [ ] lookup name under cursor
+- [x] lookup name under cursor
 - [ ] auto-suggest classes + methods
 - [ ] limit post window history for better perf
+- [ ] make app logo
+- [ ] package app somehow
 - [ ] log errors to file
 - [ ] settings
 - [ ] new file, open file (drag n drop), saving, window title
+
+
+# libraries
+
+The editor is built with [supercolliderjs](https://github.com/crucialfelix/supercolliderjs) and [Electron](https://electronjs.org/docs). For code editing, the incredible [codemirror](https://codemirror.net/) library is used.
 
 # license
 

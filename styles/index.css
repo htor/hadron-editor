@@ -1,28 +1,6 @@
 @import "codemirror.css";
-@import "editor.css";
+@import "common.css";
 
-:root {
-  --color-gray: #dbdbdb;
-  --color-red: #bf0000;
-  --color-green: #007300;
-}
-
-html {
-  box-sizing: border-box;
-  font-family: inconsolata;
-  font-size: 16px;
-}
-
-body {
-  margin: 0;
-  min-height: 100vh;
-}
-
-pre,
-code {
-  font: inherit;
-  margin: 0;
-}
 
 #loading {
   position: absolute;
@@ -57,15 +35,15 @@ code {
 .pane {
   position: relative;
   flex: 1;
+}
+
+#left.pane,
+#right.pane {
   height: 100vh;
   overflow-y: scroll;
 }
 
-.pane:first-child {
-  border-right: 1px solid var(--color-gray);
-}
-
-.pane:first-child::after {
+#left.pane::after {
   content: '';
   position: absolute;
   right: 0;
@@ -73,23 +51,40 @@ code {
   bottom: 0;
   height: 100%;
   width: 10px;
-  cursor: col-resize;
+  cursor: ew-resize;
 }
 
-#split {
+#right.pane {
   display: flex;
   flex-direction: column;
+  border-left: 1px solid var(--color-gray);
 }
 
-#help,
-#post {
+#right.pane[hidden] {
+  visibility: hidden;
+}
+
+#help.pane,
+#post.pane {
   flex: 1;
   overflow-y: auto;
 }
 
-#help {
-  position: relative;
+#help.pane {
   border-bottom: 1px solid var(--color-gray);
+}
+
+#help.pane::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  height: 10px;
+  width: 100%;
+  cursor: ns-resize;
+}
+
+#post.pane {
+  flex-grow: 0.33333;
 }
 
 #help iframe {
@@ -116,7 +111,7 @@ code {
   padding: .3rem;
   font-family: inherit;
   font-size: 13px;
-  color: #c1c1c1;
+  color: var(--color-gray-dark);
   cursor: pointer;
   pointer-events: auto;
   outline: 0;
@@ -135,5 +130,5 @@ code {
 }
 
 #post li.error {
-  color: var(--color-red);
+  color: tomato;
 }

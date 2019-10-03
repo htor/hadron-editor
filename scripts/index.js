@@ -1,33 +1,33 @@
 const fs = require('fs')
+const codemirrorStyles = require.resolve('codemirror/lib/codemirror.css')
 const { sclang } = require('electron').remote.require('./main')
 const editor = require('./scripts/editor')
 
 // const loading = document.querySelector('#loading')
-const editPane = document.querySelector('#editor')
+const leftPane = document.querySelector('#left')
+const rightPane = document.querySelector('#right')
 const helpPane = document.querySelector('#help')
 const postPane = document.querySelector('#post')
+const iframe = helpPane.querySelector('iframe')
+
 let mainEditor
 
 editor.setup()
-mainEditor = editor.attach(editPane.querySelector('textarea'))
+mainEditor = editor.attach(leftPane.querySelector('textarea'))
 mainEditor.focus()
 
 // setTimeout(() => {
 //   loading.setAttribute('hidden', '')
 // }, 200)
 
-const styles = document.createElement('style')
-styles.textContent = fs.readFileSync('./styles/codemirror.css', 'utf-8')
-styles.textContent += fs.readFileSync('./styles/editor.css', 'utf-8')
-styles.textContent += fs.readFileSync('./styles/help.css', 'utf-8')
-const iframe = helpPane.querySelector('iframe')
+window.addEventListener('mousedown', onMousedown)
+window.addEventListener('resize', onResize)
+document.addEventListener('keydown', onKeydown)
+document.addEventListener('click', onClick)
+iframe.addEventListener('load', onLoad)
 
-window.addEventListener('mousedown', mousedown)
-document.addEventListener('keydown', keydown)
-document.addEventListener('click', click)
-
-iframe.addEventListener('load', () => {
-  console.log('loading', iframe.src)
+function onLoad () {
+  console.log('loaded', iframe.src)
   const win = iframe.contentWindow
   const doc = iframe.contentDocument
   win.addEventListener('unload', () => {
@@ -66,60 +66,68 @@ iframe.addEventListener('load', () => {
   doc.querySelectorAll('.CodeMirror').forEach((el) => el.remove())
   doc.querySelectorAll('textarea').forEach(editor.attach)
 
+  // ovewrite stylesheet
+  const styles = document.createElement('link')
+  styles.rel = 'stylesheet'
+  styles.href = process.cwd() + '/styles/help.css'
   doc.head.appendChild(styles)
 
-  doc.addEventListener('keydown', keydown)
-})
+  doc.addEventListener('onkeydown', onKeydown)
+}
 
-window.addEventListener('resize', () => {
-  mainEditor.refresh()
-})
-
-function mousedown (event) {
-  if (event.target !== editPane) return
+function onMousedown (event) {
+  if (event.target !== leftPane && event.target !== helpPane) return
   event.preventDefault()
-  const pageWidth = document.body.offsetWidth
-  const flexGrow = 2 / pageWidth
+  const body = document.body
+  const targetPane = event.target
+  const isColumn = targetPane === leftPane
+  const total = isColumn ? body.offsetWidth : body.offsetHeight
+  const flexGrow = 2 / total
   function resize (event) {
-    const left = flexGrow * event.clientX
-    const right = pageWidth * flexGrow - left
-    editPane.style.flexGrow = left
-    helpPane.style.flexGrow = right
-    postPane.style.flexGrow = right
+    const increase = flexGrow * (isColumn ? event.clientX : event.clientY)
+    const decrease = total * flexGrow - increase
+    const oppsitePane = isColumn ? rightPane : postPane
+    targetPane.style.flexGrow = increase
+    oppsitePane.style.flexGrow = decrease
   }
+  iframe.style.pointerEvents = 'none'
   window.addEventListener('mousemove', resize)
   window.addEventListener('mouseup', () => {
+    iframe.style.pointerEvents = 'auto'
     window.removeEventListener('mousemove', resize)
   })
 }
 
-function click (event) {
-  const target = event.target
-  if (target.tagName === 'BUTTON') {
-    if (target.id === 'back') iframe.contentWindow.history.back()
-    if (target.id === 'forward') iframe.contentWindow.history.forward()
-  }
-}
-
-function keydown (event) {
+function onKeydown (event) {
   if (event.metaKey && event.key === 'q') {
     if (!window.confirm('Are you sure?')) {
       event.preventDefault()
     }
   }
   if (event.metaKey && event.key === 'b') sclang.interpret('s.boot')
-  if (event.metaKey && event.key === 'm') sclang.interpret('s.meter')
-  if (event.metaKey && event.key === 's') sclang.interpret('s.scope')
+  if (event.metaKey && event.shiftKey && event.key === 's') sclang.interpret('s.scope')
+  if (event.metaKey && event.shiftKey && event.key === 'm') sclang.interpret('s.meter')
   if (event.metaKey && event.key === 'o') {
     helpPane.toggleAttribute('hidden')
-    const postFull = postPane.classList.toggle('pane--bottom', !helpPane.hidden)
-    editPane.classList.toggle('pane--full', postFull)
-    postPane.classList.toggle('pane--full', helpPane.hidden)
+    rightPane.toggleAttribute('hidden', helpPane.hidden && postPane.hidden)
   }
   if (event.metaKey && event.key === 'p') {
     postPane.toggleAttribute('hidden')
-    editPane.classList.toggle('pane--full', postPane.hidden)
-    helpPane.classList.toggle('pane--full', postPane.hidden)
-    postPane.classList.toggle('pane--full', helpPane.hidden)
+    rightPane.toggleAttribute('hidden', helpPane.hidden && postPane.hidden)
   }
+}
+
+function onClick (event) {
+  const target = event.target
+  if (target.tagName === 'BUTTON') {
+    if (target.id === 'back') {
+      iframe.contentWindow.history.back()
+    } else if (target.id === 'forward') {
+      iframe.contentWindow.history.forward()
+    }
+  }
+}
+
+function onResize () {
+  mainEditor.refresh()
 }

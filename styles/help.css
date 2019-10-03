@@ -1,13 +1,5 @@
-:root {
-  --color-gray: #dbdbdb;
-  --color-red: #bf0000;
-  --color-green: #007300;
-}
-
-body {
-  font-family: inconsolata, monospace;
-  font-size: 16px;
-}
+@import "codemirror.css";
+@import "common.css";
 
 :target {
   border: 0;
@@ -74,7 +66,11 @@ a.menu-link {
 }
 
 h1 {
-  margin-top: 1rem;
+  margin-top: .6rem;
+}
+
+h2 {
+  border-bottom: 1px dashed var(--color-gray);
 }
 
 h2, h3, h4 {
@@ -83,7 +79,7 @@ h2, h3, h4 {
 
 a[href],
 a[href]:hover {
-  color: #c1c1c1;
+  color: var(--color-gray-dark);
 }
 
 textarea {

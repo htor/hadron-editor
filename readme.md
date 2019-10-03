@@ -51,8 +51,10 @@ Quit application
 - [x] output _all_ output from sclang (boot, errors, exit)
 - [x] output object/array return values from sclang
 - [x] hide docs, hide output keyboard shortcuts
-- [ ] make panels resizable by dragging
-- [ ] auto-complete classes + methods
+- [x] make panels resizable by dragging
+- [ ] auto-indent in editor
+- [ ] lookup name under cursor
+- [ ] auto-suggest classes + methods
 - [ ] limit post window history for better perf
 - [ ] log errors to file
 - [ ] settings

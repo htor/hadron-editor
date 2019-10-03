@@ -1,3 +1,4 @@
+const fs = require('fs')
 const sc = require('supercolliderjs')
 const { app, BrowserWindow } = require('electron')
 let mainWindow
@@ -15,6 +16,13 @@ async function bootSclang () {
     app.exit(1)
   }
   return sclang
+}
+
+function symlinkStyle () {
+  try {
+    fs.symlinkSync('../node_modules/codemirror/lib/codemirror.css', 'styles/codemirror.css')
+  } catch (err) {
+  }
 }
 
 function createWindow () {
@@ -38,6 +46,7 @@ app.commandLine.appendSwitch('disable-site-isolation-trials')
 app.on('ready', async () => {
   const sclang = await bootSclang()
   exports.sclang = sclang
+  symlinkStyle()
   createWindow()
 })
 

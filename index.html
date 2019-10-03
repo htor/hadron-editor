@@ -7,11 +7,11 @@
   </head>
   <body>
     <div class="panes">
-      <div class="pane" id="editor">
+      <div class="pane" id="left">
         <textarea>{SinOsc.ar}.play</textarea>
       </div>
-      <div class="pane" id="split">
-        <div id="help">
+      <div class="pane" id="right">
+        <div class="pane" id="help">
           <nav>
             <button id="back">Back</button>
             <button id="forward">Forward</button>
@@ -19,9 +19,9 @@
           <!-- <div id="loading">
             <div></div>
           </div> -->
-          <iframe src="file:///Users/n642275/Library/Application%20Support/SuperCollider/Help/Classes/SinOsc.html"></iframe>
+          <iframe src="file:///Users/n642275/Library/Application%20Support/SuperCollider/Help/Help.html"></iframe>
         </div>
-        <div id="post">
+        <div class="pane" id="post">
           <output>
             <ul></ul>
           </output>

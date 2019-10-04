@@ -1,5 +1,5 @@
 @import "codemirror.css";
-@import "common.css";
+@import "shared.css";
 
 :target {
   border: 0;
@@ -11,7 +11,7 @@
 }
 
 ::selection {
-  background: tomato;
+  background: var(--color-brown);
   color: white;
 }
 
@@ -79,7 +79,7 @@ h2, h3, h4 {
 
 a[href],
 a[href]:hover {
-  color: var(--color-gray-dark);
+  color: var(--color-gray-medium);
 }
 
 textarea {

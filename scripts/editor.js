@@ -4,7 +4,7 @@ require('codemirror/addon/edit/matchbrackets')
 require('codemirror/addon/edit/closebrackets')
 require('codemirror/addon/comment/comment')
 const { sclang } = require('electron').remote.require('./main')
-const { APPSUPPORT_DIR } = require('./common')
+const { APPSUPPORT_DIR } = require('./utils')
 const syntax = require('./syntax.js')
 const output = document.querySelector('#post output')
 

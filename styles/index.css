@@ -1,32 +1,5 @@
 @import "codemirror.css";
-@import "common.css";
-
-
-#loading {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  color: red;
-  background: white;
-  z-index: 5;
-}
-
-#loading div {
-  position: absolute;
-  top: calc(50% - 75px);
-  left: calc(50% - 75px);
-  width: 150px;
-  height: 150px;
-  background: tomato;
-  transition: .2s opacity;
-  animation: 1s linear spin infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg) }
-}
+@import "shared.css";
 
 .panes {
   display: flex;
@@ -85,6 +58,17 @@
   flex-grow: 1;
 }
 
+#help #loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1rem;
+  background: white;
+  z-index: 2;
+}
+
 #help iframe {
   width: 100%;
   height: 100%;
@@ -93,12 +77,12 @@
 
 #help nav {
   position: absolute;
-  top: .3em;
+  top: .4em;
   left: 50%;
   right: .8em;
   text-align: right;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
 }
 
 #help button#back,
@@ -109,7 +93,7 @@
   padding: .3rem;
   font-family: inherit;
   font-size: 13px;
-  color: var(--color-gray-dark);
+  color: var(--color-gray-medium);
   cursor: pointer;
   pointer-events: auto;
   outline: 0;
@@ -128,5 +112,5 @@
 }
 
 #post li.error {
-  color: tomato;
+  color: var(--color-brown);
 }

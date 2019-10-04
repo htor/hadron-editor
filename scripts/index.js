@@ -1,21 +1,18 @@
 const fs = require('fs')
 const { sclang } = require('electron').remote.require('./main')
-const { APPSUPPORT_DIR } = require('./scripts/common')
+const { APPSUPPORT_DIR } = require('./scripts/utils')
 const editor = require('./scripts/editor')
 
-// const loading = document.querySelector('#loading')
 const leftPane = document.querySelector('#left')
 const rightPane = document.querySelector('#right')
+const loading = document.querySelector('#loading')
 const helpPane = document.querySelector('#help')
 const postPane = document.querySelector('#post')
 const iframe = helpPane.querySelector('iframe')
 const docmapCode = fs.readFileSync(`${APPSUPPORT_DIR.replace('%20', ' ')}/docmap.js`, 'utf-8')
-const mainEditor = editor.attach(leftPane.querySelector('textarea'))
+const mainTextArea = leftPane.querySelector('textarea')
+const mainEditor = editor.attach(mainTextArea)
 mainEditor.focus()
-
-// setTimeout(() => {
-//   loading.setAttribute('hidden', '')
-// }, 200)
 
 window.addEventListener('mousedown', onMousedown)
 window.addEventListener('resize', onResize)
@@ -28,9 +25,7 @@ iframe.src = `file://${APPSUPPORT_DIR}/Help.html`
 function onLoad () {
   const win = iframe.contentWindow
   const doc = iframe.contentDocument
-  win.addEventListener('unload', () => {
-    // loading.removeAttribute('hidden')
-  })
+
 
   // make docmap avalable
   eval(docmapCode)
@@ -61,7 +56,7 @@ function onLoad () {
     subheader.appendChild(superclasses)
   }
 
-  // setup code blocks
+  // setup code blocks. TODO remove styles when in Guides/../..
   doc.head.querySelectorAll('link[href="./../codemirror.css"]').forEach((el) => el.remove())
   doc.head.querySelectorAll('link[href="./../editor.css"]').forEach((el) => el.remove())
   doc.querySelectorAll('.CodeMirror').forEach((el) => el.remove())
@@ -70,8 +65,12 @@ function onLoad () {
   // ovewrite stylesheet
   const styles = document.createElement('link')
   styles.rel = 'stylesheet'
-  styles.href = process.cwd() + '/styles/help.css'
+  styles.href = `${__dirname}/styles/help.css`
   doc.head.appendChild(styles)
+
+  // toggle loading
+  setTimeout(() => loading.setAttribute('hidden', ''), 50)
+  win.addEventListener('unload', () => loading.removeAttribute('hidden'))
 
   doc.addEventListener('keydown', onKeydown)
 }

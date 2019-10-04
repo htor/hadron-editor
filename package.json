@@ -1,22 +1,57 @@
 {
   "name": "sceditor",
   "version": "0.0.1",
-  "description": "sc editor",
-  "repository": "https://github.com/htor/...",
+  "description": "Experimental editor for SuperCollider with built-in help browser and post window",
+  "repository": "https://github.com/htor/sc-editor",
   "license": "MIT",
+  "private": "true",
   "main": "scripts/main.js",
   "scripts": {
     "start": "electron .",
-    "test": "standard -v"
+    "test": "standard -v",
+    "package": "electron-forge package",
+    "make": "electron-forge make && rm -rf out/sceditor-darwin-x64"
   },
   "devDependencies": {
-    "electron": "^6.0.3",
+    "@electron-forge/cli": "6.0.0-beta.45",
+    "@electron-forge/maker-deb": "6.0.0-beta.45",
+    "@electron-forge/maker-rpm": "6.0.0-beta.45",
+    "@electron-forge/maker-squirrel": "6.0.0-beta.45",
+    "@electron-forge/maker-zip": "6.0.0-beta.45",
+    "electron": "6.0.11",
     "standard": "^14.3.1"
   },
   "dependencies": {
     "codemirror": "^5.48.4",
-    "linkify-it": "^2.2.0",
-    "ohm-js": "^0.14.0",
     "supercolliderjs": "^0.14.2"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "icon": "images/logo"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "sc-editor"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
   }
 }

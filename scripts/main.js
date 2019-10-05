@@ -1,6 +1,6 @@
 const fs = require('fs')
 const sc = require('supercolliderjs')
-const { app, BrowserWindow } = require('electron')
+const { app, dialog, BrowserWindow, Menu } = require('electron')
 let mainWindow, sclang
 
 async function bootSclang () {
@@ -11,7 +11,7 @@ async function bootSclang () {
       debug: false
     })
   } catch (error) {
-    console.error(error)
+    showError(error)
     app.exit(1)
   }
 }
@@ -24,7 +24,22 @@ function symlinkStyles () {
   }
 }
 
+function showError (message) {
+  const target = mainWindow ? mainWindow : null
+  dialog.showMessageBox(target, {
+    type: 'error',
+    message: 'Oops! Something bad happened',
+    detail: 'See /tmp/sc-editor.log for details'
+  })
+  message = `\n${new Date().toLocaleString()}\n${message.toString()}`
+  console.error(message)
+  fs.appendFileSync('/tmp/sc-editor.log', message)
+}
+
 function createWindow () {
+  dialog.showErrorBox = (title, content) => {
+    showError(`${title}\n${content}\n`)
+  }
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,

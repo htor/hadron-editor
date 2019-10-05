@@ -63,7 +63,7 @@ Quit application
 - [x] make app logo
 - [x] package app somehow
 - [ ] cmd+l mark lines
-- [ ] log errors to file
+- [x] log errors to file
 - [ ] settings
 - [ ] new file, open file (drag n drop), saving, window title
 

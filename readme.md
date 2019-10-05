@@ -25,7 +25,7 @@ Boot server
 Evaluate code
 
 ### cmd+.
-Stop all audio output
+Free all synths. Stop all audio output
 
 ### cmd+m
 Show server meter
@@ -62,6 +62,7 @@ Quit application
 - [ ] fix menu items
 - [x] make app logo
 - [x] package app somehow
+- [ ] cmd+l mark lines
 - [ ] log errors to file
 - [ ] settings
 - [ ] new file, open file (drag n drop), saving, window title

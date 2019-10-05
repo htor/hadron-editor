@@ -15,17 +15,34 @@ const mainEditor = editor.attach(mainTextArea)
 mainEditor.focus()
 
 window.addEventListener('mousedown', onMousedown)
-window.addEventListener('resize', onResize)
 document.addEventListener('keydown', onKeydown)
 document.addEventListener('click', onClick)
 iframe.addEventListener('load', onLoad)
 iframe.src = `file://${APPSUPPORT_DIR}/Help.html`
 
-
 function onLoad () {
   const win = iframe.contentWindow
   const doc = iframe.contentDocument
 
+  // remove styles, scripts and code blocks
+  doc.querySelectorAll('.CodeMirror').forEach((el) => el.remove())
+  doc.head.querySelectorAll('link').forEach((link) => {
+    const file = link.getAttribute('href').split('/').pop()
+    if (['codemirror.css', 'editor.css'].includes(file)) link.remove()
+  })
+  doc.head.querySelectorAll('script').forEach((script) => {
+    const file = (script.getAttribute('src') || '').split('/').pop()
+    if (file.match(/^(codemirror|editor)/)) script.remove()
+  })
+
+  // inject own stylesheet
+  const styles = document.createElement('link')
+  styles.rel = 'stylesheet'
+  styles.href = `${__dirname}/styles/help.css`
+  doc.head.appendChild(styles)
+
+  // setup code blocks
+  doc.querySelectorAll('textarea').forEach(editor.attach)
 
   // make docmap avalable
   eval(docmapCode)
@@ -56,23 +73,16 @@ function onLoad () {
     subheader.appendChild(superclasses)
   }
 
-  // setup code blocks. TODO remove styles when in Guides/../..
-  doc.head.querySelectorAll('link[href="./../codemirror.css"]').forEach((el) => el.remove())
-  doc.head.querySelectorAll('link[href="./../editor.css"]').forEach((el) => el.remove())
-  doc.querySelectorAll('.CodeMirror').forEach((el) => el.remove())
-  doc.querySelectorAll('textarea').forEach(editor.attach)
-
-  // ovewrite stylesheet
-  const styles = document.createElement('link')
-  styles.rel = 'stylesheet'
-  styles.href = `${__dirname}/styles/help.css`
-  doc.head.appendChild(styles)
-
   // toggle loading
   setTimeout(() => loading.setAttribute('hidden', ''), 50)
-  win.addEventListener('unload', () => loading.removeAttribute('hidden'))
-
+  win.addEventListener('unload', () => {
+    doc.querySelectorAll('.CodeMirror').forEach((el) => el.remove())
+    loading.removeAttribute('hidden')
+  })
   doc.addEventListener('keydown', onKeydown)
+
+  // make codemirror adjust itself
+  win.dispatchEvent(new Event('resize'))
 }
 
 function onMousedown (event) {
@@ -99,20 +109,22 @@ function onMousedown (event) {
 }
 
 function onKeydown (event) {
-  if (event.metaKey && event.key === 'q') {
-    if (!window.confirm('Are you sure?')) {
-      event.preventDefault()
-    }
-  }
-  if (event.metaKey && event.key === 'b') sclang.interpret('s.boot')
-  if (event.metaKey && event.shiftKey && event.key === 's') sclang.interpret('s.scope')
-  if (event.metaKey && event.shiftKey && event.key === 'm') sclang.interpret('s.meter')
-  if (event.metaKey && event.key === 'o') {
+  const { metaKey, shiftKey, key } = event
+  if (metaKey && key === 'q') {
+    if (!window.confirm('Are you sure?')) event.preventDefault()
+  } else if (metaKey && key === 'b') {
+    sclang.interpret('s.boot')
+  } else if (metaKey && shiftKey && key === 's') {
+    sclang.interpret('s.scope')
+  } else if (metaKey && shiftKey && key === 'm') {
+    sclang.interpret('s.meter')
+  } else if (metaKey && shiftKey && key === 'p') {
+    postPane.querySelector('ul').innerHTML = ''
+  } else if (metaKey && key === 'o') {
     helpPane.toggleAttribute('hidden')
     rightPane.toggleAttribute('hidden', helpPane.hidden && postPane.hidden)
     postPane.classList.toggle('pane--full', helpPane.hidden && !postPane.hidden)
-  }
-  if (event.metaKey && event.key === 'p') {
+  } else if (metaKey && key === 'p') {
     postPane.toggleAttribute('hidden')
     rightPane.toggleAttribute('hidden', helpPane.hidden && postPane.hidden)
     postPane.classList.toggle('pane--full', helpPane.hidden && !postPane.hidden)
@@ -122,14 +134,12 @@ function onKeydown (event) {
 function onClick (event) {
   const target = event.target
   if (target.tagName === 'BUTTON') {
-    if (target.id === 'back') {
+    if (target.id === 'refresh') {
+      iframe.contentWindow.location.reload(true)
+    } else if (target.id === 'back') {
       iframe.contentWindow.history.back()
     } else if (target.id === 'forward') {
       iframe.contentWindow.history.forward()
     }
   }
-}
-
-function onResize () {
-  mainEditor.refresh()
 }

@@ -20,12 +20,6 @@ body {
   min-height: 100vh;
 }
 
-pre,
-code {
-  font: inherit;
-  margin: 0;
-}
-
 .CodeMirror {
   height: 100%;
   padding: 1em;
@@ -45,7 +39,6 @@ code {
   color: white !important;
   background: var(--color-brown) !important;
 }
-
 
 .text-marked {
   animation: text-marked .3s ease-out;

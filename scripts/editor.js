@@ -21,8 +21,14 @@ function attach (textarea) {
     autoCloseBrackets: true,
     extraKeys: {
       Tab: () => editor.replaceSelection('  '),
-      'Cmd-Enter': () => evaluate(selectRegion(editor)),
-      'Shift-Enter': () => evaluate(selectLine(editor)),
+      'Cmd-Enter': () => {
+        const selection = selectRegion(editor)
+        if (selection) evaluate(selection)
+      },
+      'Shift-Enter': () => {
+        const selection = selectLine(editor)
+        if (selection) evaluate(selection)
+      },
       'Shift-Cmd-K': () => editor.toggleComment(),
       'Cmd-.': () => evaluate('CmdPeriod.run'),
       'Cmd-D': () => lookupWord(editor)

@@ -78,13 +78,13 @@
 #help nav {
   position: absolute;
   top: .4em;
-  left: 50%;
   right: .8em;
   text-align: right;
   pointer-events: none;
   z-index: 2;
 }
 
+#help button#refresh,
 #help button#back,
 #help button#forward {
   -webkit-appearance: none;
@@ -113,4 +113,9 @@
 
 #post li.error {
   color: var(--color-brown);
+}
+
+#post pre {
+  margin: 0;
+  font: inherit;
 }

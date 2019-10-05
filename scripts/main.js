@@ -16,9 +16,10 @@ async function bootSclang () {
   }
 }
 
-function symlinkStyle () {
+function symlinkStyles () {
+  const styles = require.resolve('codemirror/lib/codemirror.css')
   try {
-    fs.symlinkSync('../node_modules/codemirror/lib/codemirror.css', 'styles/codemirror.css')
+    fs.symlinkSync(styles, 'styles/codemirror.css')
   } catch (err) {
   }
 }
@@ -38,12 +39,13 @@ function createWindow () {
   })
 }
 
+// to make iframing docs work
 app.commandLine.appendSwitch('disable-site-isolation-trials')
 
 app.on('ready', async () => {
   await bootSclang()
   exports.sclang = sclang
-  symlinkStyle()
+  symlinkStyles()
   createWindow()
 })
 

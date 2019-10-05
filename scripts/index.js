@@ -114,6 +114,8 @@ function onKeydown (event) {
     if (!window.confirm('Are you sure?')) event.preventDefault()
   } else if (metaKey && key === 'b') {
     sclang.interpret('s.boot')
+  } else if (metaKey && key === '.') {
+    sclang.interpret('CmdPeriod.run')
   } else if (metaKey && shiftKey && key === 's') {
     sclang.interpret('s.scope')
   } else if (metaKey && shiftKey && key === 'm') {

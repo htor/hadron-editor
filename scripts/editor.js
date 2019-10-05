@@ -49,11 +49,17 @@ function attach (textarea) {
 }
 
 function lookupWord (editor) {
-  const range = editor.findWordAt(editor.getCursor())
-  const word = editor.getRange(range.anchor, range.head)
+  let range, word, page
+  if (editor.somethingSelected()) {
+    const from = editor.getCursor('start')
+    const to = editor.getCursor('end')
+    word = editor.getRange(from, to)
+  } else {
+    range = editor.findWordAt(editor.getCursor())
+    word = editor.getRange(range.anchor, range.head)
+  }
   const first = word.charAt(0)
   const isUpperCase = first === first.toUpperCase()
-  let page
   if (!word || word.match(/^\W/)) return
   if (isUpperCase) {
     if (docmap[`Classes/${word}`]) {

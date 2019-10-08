@@ -48,27 +48,6 @@ Show/hide post window
 ### cmd+q
 Quit application
 
-
-# todo
-
-- [x] output _all_ output from sclang (boot, errors, exit)
-- [x] output object/array return values from sclang
-- [x] hide docs, hide output keyboard shortcuts
-- [x] make panels resizable by dragging
-- [x] auto-indent in editor
-- [x] lookup name under cursor
-- [ ] auto-suggest classes + methods
-- [ ] limit post window history for better perf
-- [ ] fix menu items
-- [x] make app logo
-- [x] package app somehow
-- [ ] cmd+l mark lines
-- [x] log errors to file
-- [ ] settings
-- [ ] new file, open file (drag n drop), saving, window title
-
-
-
 # libraries
 
 The editor is built with [supercolliderjs](https://github.com/crucialfelix/supercolliderjs) and [Electron](https://electronjs.org/docs). For code editing, the incredible [codemirror](https://codemirror.net/) library is used.

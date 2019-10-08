@@ -11,14 +11,24 @@ const postPane = document.querySelector('#post')
 const iframe = helpPane.querySelector('iframe')
 const docmapCode = fs.readFileSync(`${APPSUPPORT_DIR.replace('%20', ' ')}/docmap.js`, 'utf-8')
 const mainTextArea = leftPane.querySelector('textarea')
-const mainEditor = editor.attach(mainTextArea)
-mainEditor.focus()
 
-window.addEventListener('mousedown', onMousedown)
-document.addEventListener('keydown', onKeydown)
-document.addEventListener('click', onClick)
-iframe.addEventListener('load', onLoad)
-iframe.src = `file://${APPSUPPORT_DIR}/Help.html`
+function start () {
+  editor.setup()
+  editor.attach(mainTextArea).focus()
+  sclang.on('stdout', (message) => editor.post(message, 'info'))
+  sclang.on('stderr', (message) => editor.post(message, 'error'))
+
+  window.addEventListener('beforeunload', function () {
+    sclang.removeAllListeners('stdout')
+    sclang.removeAllListeners('stderr')
+  })
+  window.addEventListener('mousedown', onMousedown)
+  document.addEventListener('keydown', onKeydown)
+  document.addEventListener('click', onClick)
+
+  iframe.addEventListener('load', onLoad)
+  iframe.src = `file://${APPSUPPORT_DIR}/Help.html`
+}
 
 function onLoad () {
   const win = iframe.contentWindow
@@ -113,13 +123,13 @@ function onKeydown (event) {
   if (metaKey && key === 'q') {
     if (!window.confirm('Are you sure?')) event.preventDefault()
   } else if (metaKey && key === 'b') {
-    sclang.interpret('s.boot')
+    sclang.interpret('Server.default.boot')
   } else if (metaKey && key === '.') {
     sclang.interpret('CmdPeriod.run')
   } else if (metaKey && shiftKey && key === 's') {
-    sclang.interpret('s.scope')
+    sclang.interpret('Server.default.scope')
   } else if (metaKey && shiftKey && key === 'm') {
-    sclang.interpret('s.meter')
+    sclang.interpret('Server.default.meter')
   } else if (metaKey && shiftKey && key === 'p') {
     postPane.querySelector('ul').innerHTML = ''
   } else if (metaKey && key === 'o') {
@@ -145,3 +155,5 @@ function onClick (event) {
     }
   }
 }
+
+start()

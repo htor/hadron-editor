@@ -75,5 +75,5 @@ app.on('window-all-closed', async () => {
 })
 
 app.on('quit', async () => {
-  await sclang.interpret('s.quit')
+  await sclang.interpret('Server.default.quit')
 })

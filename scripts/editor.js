@@ -8,9 +8,9 @@ const { APPSUPPORT_DIR } = require('./utils')
 const syntax = require('./syntax.js')
 const output = document.querySelector('#post output')
 
-CodeMirror.defineSimpleMode('scd', syntax)
-sclang.on('stdout', (message) => post(message, 'info'))
-sclang.on('stderr', (message) => post(message, 'error'))
+function setup () {
+  CodeMirror.defineSimpleMode('scd', syntax)
+}
 
 function attach (textarea) {
   const editor = CodeMirror.fromTextArea(textarea, {
@@ -21,25 +21,11 @@ function attach (textarea) {
     autoCloseBrackets: true,
     extraKeys: {
       Tab: () => editor.replaceSelection('  '),
-      'Cmd-Enter': () => {
-        const selection = selectRegion(editor)
-        if (selection) evaluate(selection)
-      },
-      'Shift-Enter': () => {
-        const selection = selectLine(editor)
-        if (selection) evaluate(selection)
-      },
+      'Cmd-Enter': () => evaluate(selectRegion(editor)),
+      'Shift-Enter': () => evaluate(selectLine(editor)),
       'Shift-Cmd-K': () => editor.toggleComment(),
       'Cmd-.': () => evaluate('CmdPeriod.run'),
       'Cmd-D': () => lookupWord(editor)
-    }
-  })
-  editor.on('dblclick', (editor) => {
-    const cursor = editor.getCursor()
-    const line = editor.getLine(cursor.line)
-    if (line.slice(cursor.ch - 1, cursor.ch).match(/[()]/)) {
-      editor.undoSelection()
-      selectRegion(editor, false)
     }
   })
   editor.on('blur', (editor) => {
@@ -79,79 +65,50 @@ function lookupWord (editor) {
   iframe.src = `file://${APPSUPPORT_DIR}${page}`
 }
 
-function selectRegion (editor, markSelection = true) {
+function selectRegion (editor) {
   const cursor = editor.getCursor()
-  const line = editor.getLine(cursor.line)
-
-  function findLeftParen (cursor) {
-    const left = editor.findPosH(cursor, -1, 'char')
-    const char = editor.getLine(left.line).slice(left.ch, left.ch + 1)
-    const token = editor.getTokenTypeAt(cursor) || ''
-    if (left.hitSide) return left
-    if (token.match(/^(comment|string|symbol|char)/)) return findLeftParen(left)
-    if (char === ')') return findLeftParen(findLeftParen(left))
-    if (char === '(') return left
-    return findLeftParen(left)
-  }
-
-  function findRightParen (cursor) {
-    const right = editor.findPosH(cursor, 1, 'char')
-    const char = editor.getLine(right.line).slice(right.ch - 1, right.ch)
-    const token = editor.getTokenTypeAt(cursor) || ''
-    if (right.hitSide) return right
-    if (token.match(/^(comment|string|symbol|char)/)) return findRightParen(right)
-    if (char === '(') return findRightParen(findRightParen(right))
-    if (char === ')') return right
-    return findRightParen(right)
-  }
+  const ranges = []
+  let brackets = 0
 
   if (editor.somethingSelected()) {
-    return selectLine(editor, markSelection)
+    return selectLine(editor)
   }
 
-  // Adjust cursor before finding parens
-  if (line.slice(cursor.ch, cursor.ch + 1) === '(') {
-    editor.setCursor(Object.assign(cursor, { ch: cursor.ch + 1 }))
-  } else if (line.slice(cursor.ch - 1, cursor.ch) === ')') {
-    editor.setCursor(Object.assign(cursor, { ch: cursor.ch - 1 }))
+  for (let i = 0; i < editor.lineCount(); i++) {
+    const line = editor.getLine(i)
+    for (let j = 0; j < line.length; j++) {
+      const char = line.charAt(j)
+      const type = editor.getTokenTypeAt({ line: i, ch: j + 1 })
+      const skip = type.match(/^(comment|string|symbol|char)/)
+      if (skip) continue
+      if (char === '(') {
+        if (brackets++ === 0) {
+          ranges.push([i + j])
+        }
+      } else if (char === ')') {
+        if (--brackets === 0) {
+          ranges[ranges.length - 1].push(i + j)
+        }
+      }
+    }
   }
 
-  const parenPairs = []
-  let left = findLeftParen(cursor)
-  let right = findRightParen(cursor)
+  const range = ranges.find((range) => {
+    return range[0] <= cursor.line && cursor.line <= range[1]
+  })
 
-  while (!left.hitSide || !right.hitSide) {
-    parenPairs.push([left, right])
-    left = findLeftParen(left)
-    right = findRightParen(right)
-  }
-
-  // No parens found
-  if (parenPairs.length === 0) {
-    return selectLine(editor, markSelection)
-  }
-
-  const pair = parenPairs.pop()
-  left = pair[0]
-  right = pair[1]
-
-  // Parens are inline
-  if (left.ch > 0) {
-    return selectLine(editor, markSelection)
-  }
-
-  // Parens are a region
-  if (markSelection) {
-    const marker = editor.markText(left, right, { className: 'text-marked' })
+  if (range) {
+    const from = { line: range[0], ch: 0 }
+    const to = { line: range[1], ch: Infinity }
+    const marker = editor.markText(from, to, { className: 'text-marked' })
     setTimeout(() => marker.clear(), 300)
-    return editor.getRange(left, right)
+    return editor.getRange(from, to)
   } else {
-    editor.addSelection(left, right)
-    return editor.getSelection()
+    return selectLine(editor)
   }
 }
 
-function selectLine (editor, markSelection = true) {
+function selectLine (editor) {
   const cursor = editor.getCursor()
   let from, to
   if (editor.somethingSelected()) {
@@ -159,23 +116,21 @@ function selectLine (editor, markSelection = true) {
     to = editor.getCursor('end')
   } else {
     from = { line: cursor.line, ch: 0 }
-    to = { line: cursor.line, ch: editor.getLine(cursor.line).length }
+    to = { line: cursor.line, ch: Infinity }
   }
-  if (markSelection) {
-    const marker = editor.markText(from, to, { className: 'text-marked' })
-    setTimeout(() => marker.clear(), 300)
-  }
+  const marker = editor.markText(from, to, { className: 'text-marked' })
+  setTimeout(() => marker.clear(), 300)
   return editor.getRange(from, to)
 }
 
 async function evaluate (code) {
-  let result
+  if (!code) return ''
   try {
-    result = await sclang.interpret(code)
+    const result = await sclang.interpret(code)
+    post(stringify(result))
   } catch (error) {
-    return post(stringifyError(error), 'error')
+    post(stringifyError(error), 'error')
   }
-  post(stringify(result))
 }
 
 function stringify (value) {
@@ -209,4 +164,6 @@ function post (message, type = 'value') {
   line.scrollIntoView()
 }
 
+exports.setup = setup
 exports.attach = attach
+exports.post = post

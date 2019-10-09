@@ -122,6 +122,17 @@ function onKeydown (event) {
   const { metaKey, shiftKey, key } = event
   if (metaKey && key === 'q') {
     if (!window.confirm('Are you sure?')) event.preventDefault()
+  } else if (metaKey && key === '+') {
+    event.preventDefault()
+    const zoom = Number(leftPane.style.zoom || 1) + 0.1
+    leftPane.style.zoom = postPane.style.zoom = zoom
+  } else if (metaKey && key === '-') {
+    event.preventDefault()
+    const zoom = Number(leftPane.style.zoom || 1) - 0.1
+    leftPane.style.zoom = postPane.style.zoom = zoom
+  } else if (metaKey && key === '0') {
+    event.preventDefault()
+    leftPane.style.zoom = postPane.style.zoom = 1
   } else if (metaKey && key === 'b') {
     sclang.interpret('Server.default.boot')
   } else if (metaKey && key === '.') {
@@ -130,6 +141,8 @@ function onKeydown (event) {
     sclang.interpret('Server.default.scope')
   } else if (metaKey && shiftKey && key === 'm') {
     sclang.interpret('Server.default.meter')
+  } else if (metaKey && shiftKey && key === 't') {
+    sclang.interpret('Server.default.plotTree')
   } else if (metaKey && shiftKey && key === 'p') {
     postPane.querySelector('ul').innerHTML = ''
   } else if (metaKey && key === 'o') {

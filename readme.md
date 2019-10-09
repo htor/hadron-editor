@@ -33,9 +33,6 @@ Show server meter
 ### cmd+s
 Show server scope
 
-### cmd+shift+k
-Comment/uncomment text selection
-
 ### cmd+d
 Lookup help for word under cursor
 
@@ -47,6 +44,12 @@ Show/hide post window
 
 ### cmd+q
 Quit application
+
+### cmd+shift+k
+Comment/uncomment text selection
+
+### cmd+shift+p
+Clear post window
 
 # libraries
 

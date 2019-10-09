@@ -13,16 +13,13 @@ body {
   box-sizing: border-box;
   font-family: inconsolata;
   font-size: 16px;
-}
-
-body {
+  height: 100%;
   margin: 0;
-  min-height: 100vh;
 }
 
 .CodeMirror {
   height: 100%;
-  padding: 1em;
+  padding: 1rem;
   font: inherit;
   cursor: text;
 }
@@ -47,7 +44,6 @@ body {
 @keyframes text-marked {
   50% { color: white; background: var(--color-brown) }
 }
-
 
 .cm-s-default .cm-keyword { color: var(--color-brown); }
 .cm-s-default .cm-built-in { color: var(--color-brown); }

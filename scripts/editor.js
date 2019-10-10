@@ -24,7 +24,6 @@ function attach (textarea) {
       'Cmd-Enter': () => evaluate(selectRegion(editor)),
       'Shift-Enter': () => evaluate(selectLine(editor)),
       'Shift-Cmd-K': () => editor.toggleComment(),
-      'Cmd-.': () => evaluate('CmdPeriod.run'),
       'Cmd-D': () => lookupWord(editor)
     }
   })
@@ -78,7 +77,7 @@ function selectRegion (editor) {
     const line = editor.getLine(i)
     for (let j = 0; j < line.length; j++) {
       const char = line.charAt(j)
-      const type = editor.getTokenTypeAt({ line: i, ch: j + 1 })
+      const type = editor.getTokenTypeAt({ line: i, ch: j + 1 }) || ''
       const skip = type.match(/^(comment|string|symbol|char)/)
       if (skip) continue
       if (char === '(') {
@@ -126,18 +125,11 @@ function selectLine (editor) {
 async function evaluate (code) {
   if (!code) return ''
   try {
-    const result = await sclang.interpret(code)
-    post(stringify(result))
+    const result = await sclang.interpret(code, null, true)
+    post(result)
   } catch (error) {
     post(stringifyError(error), 'error')
   }
-}
-
-function stringify (value) {
-  if (value === null) return 'nil'
-  if (Array.isArray(value)) return `[ ${value.map(stringify).join(', ')} ]`
-  if (value.string) return value.string
-  return String(value).replace('CmdPeriod', '')
 }
 
 function stringifyError (value) {

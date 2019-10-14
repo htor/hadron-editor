@@ -8,6 +8,7 @@ const { showError } = require('electron').remote.require('./main')
 const { APPSUPPORT_DIR } = require('./utils')
 const syntax = require('./syntax.js')
 const output = document.querySelector('#post output')
+const iframe = document.querySelector('#help iframe')
 let sclang
 
 async function start () {
@@ -57,6 +58,7 @@ function lookupWord (editor) {
     range = editor.findWordAt(editor.getCursor())
     word = editor.getRange(range.anchor, range.head)
   }
+  const docmap = window.docmap
   const first = word.charAt(0)
   const isUpperCase = first === first.toUpperCase()
   if (!word || word.match(/^\W/)) return
@@ -66,14 +68,16 @@ function lookupWord (editor) {
     } else {
       page = `/Search.html#${word}`
     }
-  } else found: {
-    for (const doc in docmap) {
-      if (docmap[doc].methods.find((m) => m.slice(2) === word)) {
-        page = `/Overviews/Methods.html#${word}`;
-        break found;
+  } else {
+    found: {
+      for (const doc in docmap) {
+        if (docmap[doc].methods.find((m) => m.slice(2) === word)) {
+          page = `/Overviews/Methods.html#${word}`
+          break found
+        }
       }
+      page = `/Search.html#${word}`
     }
-    page = `/Search.html#${word}`
   }
   iframe.src = `file://${APPSUPPORT_DIR}${page}`
 }

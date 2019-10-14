@@ -10,7 +10,6 @@ const postPane = document.querySelector('#post')
 const iframe = helpPane.querySelector('iframe')
 const docmapCode = fs.readFileSync(`${APPSUPPORT_DIR.replace('%20', ' ')}/docmap.js`, 'utf-8')
 const mainTextArea = leftPane.querySelector('textarea')
-let sclang
 
 function start () {
   editor.start()
@@ -51,9 +50,9 @@ function onLoad () {
 
   // fix menubar dropdown linx
   const dropdowns = doc.querySelectorAll('.menu-link[href="#"]')
-  dropdowns.forEach((dropdown) => dropdown.textContent = dropdown.textContent.replace('▼', ''))
+  dropdowns.forEach((dropdown) => (dropdown.textContent = dropdown.textContent.replace('▼', '')))
 
-  doc.querySelectorAll('#folder').forEach((folder) => folder.nextSibling ? folder.nextSibling.textContent = ' > ' : '')
+  doc.querySelectorAll('#folder').forEach((folder) => folder.nextSibling ? (folder.nextSibling.textContent = ' > ') : '')
 
   // move subheader to bottom related
   doc.querySelectorAll('.doclink').forEach((el) => el.remove())
@@ -84,7 +83,7 @@ function onLoad () {
   doc.addEventListener('keydown', onKeydown)
 
   // make codemirror adjust itself
-  win.dispatchEvent(new Event('resize'))
+  win.dispatchEvent(new window.Event('resize'))
 }
 
 function onMousedown (event) {

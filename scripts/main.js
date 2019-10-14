@@ -1,9 +1,9 @@
 const fs = require('fs')
-const { app, dialog, BrowserWindow, Menu } = require('electron')
+const { app, dialog, BrowserWindow } = require('electron')
 let mainWindow
 
 function showError (message) {
-  const target = mainWindow ? mainWindow : null
+  const target = mainWindow || null
   dialog.showMessageBox(target, {
     type: 'error',
     message: 'Oops! Something bad happened',

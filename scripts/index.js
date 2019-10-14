@@ -1,7 +1,6 @@
 const fs = require('fs')
-const { sclang } = require('electron').remote.require('./main')
-const { APPSUPPORT_DIR } = require('./scripts/utils')
 const editor = require('./scripts/editor')
+const { APPSUPPORT_DIR } = require('./scripts/utils')
 
 const leftPane = document.querySelector('#left')
 const rightPane = document.querySelector('#right')
@@ -11,21 +10,14 @@ const postPane = document.querySelector('#post')
 const iframe = helpPane.querySelector('iframe')
 const docmapCode = fs.readFileSync(`${APPSUPPORT_DIR.replace('%20', ' ')}/docmap.js`, 'utf-8')
 const mainTextArea = leftPane.querySelector('textarea')
+let sclang
 
 function start () {
-  editor.setup()
+  editor.start()
   editor.attach(mainTextArea).focus()
-  sclang.on('stdout', (message) => editor.post(message, 'info'))
-  sclang.on('stderr', (message) => editor.post(message, 'error'))
-
-  window.addEventListener('beforeunload', function () {
-    sclang.removeAllListeners('stdout')
-    sclang.removeAllListeners('stderr')
-  })
   window.addEventListener('mousedown', onMousedown)
   document.addEventListener('keydown', onKeydown)
   document.addEventListener('click', onClick)
-
   iframe.addEventListener('load', onLoad)
   iframe.src = `file://${APPSUPPORT_DIR}/Help.html`
 }
@@ -121,7 +113,11 @@ function onMousedown (event) {
 function onKeydown (event) {
   const { metaKey, shiftKey, key } = event
   if (metaKey && key === 'q') {
-    if (!window.confirm('Are you sure?')) event.preventDefault()
+    if (!window.confirm('Are you sure?')) {
+      event.preventDefault()
+    } else {
+      editor.evaluate('Server.default.quit')
+    }
   } else if (metaKey && key === '+') {
     event.preventDefault()
     const zoom = Number(leftPane.style.zoom || 1) + 0.1
@@ -134,15 +130,15 @@ function onKeydown (event) {
     event.preventDefault()
     leftPane.style.zoom = postPane.style.zoom = 1
   } else if (metaKey && key === 'b') {
-    sclang.interpret('Server.default.boot')
+    editor.evaluate('Server.default.boot')
   } else if (metaKey && key === '.') {
-    sclang.interpret('CmdPeriod.run')
+    editor.evaluate('CmdPeriod.run')
   } else if (metaKey && shiftKey && key === 's') {
-    sclang.interpret('Server.default.scope')
+    editor.evaluate('Server.default.scope')
   } else if (metaKey && shiftKey && key === 'm') {
-    sclang.interpret('Server.default.meter')
+    editor.evaluate('Server.default.meter')
   } else if (metaKey && shiftKey && key === 't') {
-    sclang.interpret('Server.default.plotTree')
+    editor.evaluate('Server.default.plotTree')
   } else if (metaKey && shiftKey && key === 'p') {
     postPane.querySelector('ul').innerHTML = ''
   } else if (metaKey && key === 'o') {

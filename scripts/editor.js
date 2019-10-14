@@ -1,15 +1,29 @@
+const sc = require('supercolliderjs')
 const CodeMirror = require('codemirror')
 require('codemirror/addon/mode/simple')
 require('codemirror/addon/edit/matchbrackets')
 require('codemirror/addon/edit/closebrackets')
 require('codemirror/addon/comment/comment')
-const { sclang } = require('electron').remote.require('./main')
+const { showError } = require('electron').remote.require('./main')
 const { APPSUPPORT_DIR } = require('./utils')
 const syntax = require('./syntax.js')
 const output = document.querySelector('#post output')
+let sclang
 
-function setup () {
+async function start () {
   CodeMirror.defineSimpleMode('scd', syntax)
+  try {
+    sclang = await sc.lang.boot({
+      stdin: false,
+      echo: false,
+      debug: false
+    })
+  } catch (error) {
+    console.log(error)
+    showError(error)
+  }
+  sclang.on('stdout', (message) => post(message, 'info'))
+  sclang.on('stderr', (message) => post(message, 'error'))
 }
 
 function attach (textarea) {
@@ -156,6 +170,6 @@ function post (message, type = 'value') {
   line.scrollIntoView()
 }
 
-exports.setup = setup
+exports.start = start
 exports.attach = attach
-exports.post = post
+exports.evaluate = evaluate

@@ -1,28 +1,6 @@
 const fs = require('fs')
-const sc = require('supercolliderjs')
 const { app, dialog, BrowserWindow, Menu } = require('electron')
-let mainWindow, sclang
-
-async function bootSclang () {
-  try {
-    sclang = await sc.lang.boot({
-      stdin: false,
-      echo: false,
-      debug: false
-    })
-  } catch (error) {
-    showError(error)
-    app.exit(1)
-  }
-}
-
-function symlinkStyles () {
-  const styles = require.resolve('codemirror/lib/codemirror.css')
-  try {
-    fs.symlinkSync(styles, 'styles/codemirror.css')
-  } catch (err) {
-  }
-}
+let mainWindow
 
 function showError (message) {
   const target = mainWindow ? mainWindow : null
@@ -34,6 +12,14 @@ function showError (message) {
   message = `\n${new Date().toLocaleString()}\n${message.toString()}`
   console.error(message)
   fs.appendFileSync('/tmp/sc-editor.log', message)
+}
+
+function symlinkStyles () {
+  const styles = require.resolve('codemirror/lib/codemirror.css')
+  try {
+    fs.symlinkSync(styles, 'styles/codemirror.css')
+  } catch (err) {
+  }
 }
 
 function createWindow () {
@@ -58,8 +44,6 @@ function createWindow () {
 app.commandLine.appendSwitch('disable-site-isolation-trials')
 
 app.on('ready', async () => {
-  await bootSclang()
-  exports.sclang = sclang
   symlinkStyles()
   createWindow()
 })
@@ -74,6 +58,4 @@ app.on('window-all-closed', async () => {
   mainWindow = null
 })
 
-app.on('quit', async () => {
-  await sclang.interpret('Server.default.quit')
-})
+exports.showError = showError

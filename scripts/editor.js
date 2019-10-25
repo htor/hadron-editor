@@ -36,10 +36,11 @@ function attach (textarea) {
     autoCloseBrackets: true,
     extraKeys: {
       Tab: () => editor.replaceSelection('  '),
-      'Cmd-Enter': () => evaluate(selectRegion(editor)),
-      'Shift-Enter': () => evaluate(selectLine(editor)),
+      'Cmd-Enter': () => evalRegion(editor),
+      'Shift-Enter': () => evalLine(editor),
       'Shift-Cmd-K': () => editor.toggleComment(),
-      'Cmd-D': () => lookupWord(editor)
+      'Cmd-D': () => lookupWord(editor),
+      'Cmd-L': () => selectLine(editor)
     }
   })
   editor.on('blur', (editor) => {
@@ -48,47 +49,36 @@ function attach (textarea) {
   return editor
 }
 
-function lookupWord (editor) {
-  let range, word, page
-  if (editor.somethingSelected()) {
-    const from = editor.getCursor('start')
-    const to = editor.getCursor('end')
-    word = editor.getRange(from, to)
-  } else {
-    range = editor.findWordAt(editor.getCursor())
-    word = editor.getRange(range.anchor, range.head)
-  }
-  const docmap = window.docmap
-  const first = word.charAt(0)
-  const isUpperCase = first === first.toUpperCase()
-  if (!word || word.match(/^\W/)) return
-  if (isUpperCase) {
-    if (docmap[`Classes/${word}`]) {
-      page = `/Classes/${word}.html`
-    } else {
-      page = `/Search.html#${word}`
-    }
-  } else {
-    found: {
-      for (const doc in docmap) {
-        if (docmap[doc].methods.find((m) => m.slice(2) === word)) {
-          page = `/Overviews/Methods.html#${word}`
-          break found
-        }
-      }
-      page = `/Search.html#${word}`
-    }
-  }
-  iframe.src = `file://${APPSUPPORT_DIR}${page}`
+function selectLine (editor) {
+  const cursor = editor.getCursor()
+  const from = { line: cursor.line, ch: 0 }
+  const to = { line: cursor.line + 1, ch: Infinity }
+  editor.setExtending(true)
+  editor.extendSelection(from, to)
+  editor.setExtending(false)
 }
 
-function selectRegion (editor) {
+function evalLine (editor) {
+  const cursor = editor.getCursor()
+  let from, to
+  if (editor.somethingSelected()) {
+    from = editor.getCursor('start')
+    to = editor.getCursor('end')
+  } else {
+    from = { line: cursor.line, ch: 0 }
+    to = { line: cursor.line, ch: Infinity }
+  }
+  evaluate(editor.getRange(from, to))
+  markText(editor, from, to)
+}
+
+function evalRegion (editor) {
   const cursor = editor.getCursor()
   const ranges = []
   let brackets = 0
 
   if (editor.somethingSelected()) {
-    return selectLine(editor)
+    return evalLine(editor)
   }
 
   for (let i = 0; i < editor.lineCount(); i++) {
@@ -98,14 +88,10 @@ function selectRegion (editor) {
       const type = editor.getTokenTypeAt({ line: i, ch: j + 1 }) || ''
       const skip = type.match(/^(comment|string|symbol|char)/)
       if (skip) continue
-      if (char === '(') {
-        if (brackets++ === 0) {
-          ranges.push([i + j])
-        }
-      } else if (char === ')') {
-        if (--brackets === 0) {
-          ranges[ranges.length - 1].push(i + j)
-        }
+      if (char === '(' && brackets++ === 0) {
+        ranges.push([i])
+      } else if (char === ')' && --brackets === 0) {
+        ranges[ranges.length - 1].push(i)
       }
     }
   }
@@ -117,27 +103,16 @@ function selectRegion (editor) {
   if (range) {
     const from = { line: range[0], ch: 0 }
     const to = { line: range[1], ch: Infinity }
-    const marker = editor.markText(from, to, { className: 'text-marked' })
-    setTimeout(() => marker.clear(), 300)
-    return editor.getRange(from, to)
+    evaluate(editor.getRange(from, to))
+    markText(editor, from, to)
   } else {
-    return selectLine(editor)
+    evalLine(editor)
   }
 }
 
-function selectLine (editor) {
-  const cursor = editor.getCursor()
-  let from, to
-  if (editor.somethingSelected()) {
-    from = editor.getCursor('start')
-    to = editor.getCursor('end')
-  } else {
-    from = { line: cursor.line, ch: 0 }
-    to = { line: cursor.line, ch: Infinity }
-  }
+function markText (editor, from, to) {
   const marker = editor.markText(from, to, { className: 'text-marked' })
   setTimeout(() => marker.clear(), 300)
-  return editor.getRange(from, to)
 }
 
 async function evaluate (code) {
@@ -172,6 +147,40 @@ function post (message, type = 'value') {
   line.innerHTML = `<pre>${message}</pre>`
   lines.appendChild(line)
   line.scrollIntoView()
+}
+
+function lookupWord (editor) {
+  let range, word, page
+  if (editor.somethingSelected()) {
+    const from = editor.getCursor('start')
+    const to = editor.getCursor('end')
+    word = editor.getRange(from, to)
+  } else {
+    range = editor.findWordAt(editor.getCursor())
+    word = editor.getRange(range.anchor, range.head)
+  }
+  const docmap = window.docmap
+  const first = word.charAt(0)
+  const isUpperCase = first === first.toUpperCase()
+  if (!word || word.match(/^\W/)) return
+  if (isUpperCase) {
+    if (docmap[`Classes/${word}`]) {
+      page = `/Classes/${word}.html`
+    } else {
+      page = `/Search.html#${word}`
+    }
+  } else {
+    found: {
+      for (const doc in docmap) {
+        if (docmap[doc].methods.find((m) => m.slice(2) === word)) {
+          page = `/Overviews/Methods.html#${word}`
+          break found
+        }
+      }
+      page = `/Search.html#${word}`
+    }
+  }
+  iframe.src = `file://${APPSUPPORT_DIR}${page}`
 }
 
 exports.start = start

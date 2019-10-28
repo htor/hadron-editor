@@ -115,6 +115,7 @@ function onKeydown (event) {
   if (metaKey && key === '0') {
     event.preventDefault()
     leftPane.style.fontSize = postPane.style.fontSize = '1rem'
+    mainEditor.refresh()
   } else if (metaKey && (key === '+' || key === '-')) {
     event.preventDefault()
     const increase = key === '+' ? 0.1 : -0.1

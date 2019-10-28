@@ -85,9 +85,7 @@
   z-index: 2;
 }
 
-#help button#refresh,
-#help button#back,
-#help button#forward {
+#help > nav button {
   -webkit-appearance: none;
   user-select: none;
   background: none;
@@ -99,6 +97,10 @@
   pointer-events: auto;
   outline: 0;
   border: 0;
+}
+
+#help > nav button:hover {
+  color: var(--color-gray-large);
 }
 
 #post output {
@@ -113,7 +115,7 @@
 }
 
 #post li.info {
-  color: var(--color-gray-medium);
+  color: var(--color-gray-large);
 }
 
 #post li.error {

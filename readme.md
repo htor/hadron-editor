@@ -33,6 +33,9 @@ Show server meter
 ### cmd+s
 Show server scope
 
+### cmd+shift+k
+Comment/uncomment text selection
+
 ### cmd+d
 Lookup help for word under cursor
 
@@ -42,11 +45,17 @@ Show/hide help browser
 ### cmd+p
 Show/hide post window
 
+### cmd+plus
+Increase font size
+
+### cmd+minus
+Decrease font size
+
+### cmd+zero
+Reset font size
+
 ### cmd+q
 Quit application
-
-### cmd+shift+k
-Comment/uncomment text selection
 
 ### cmd+shift+p
 Clear post window

@@ -27,10 +27,10 @@ Evaluate code
 ### cmd+.
 Free all synths. Stop all audio output
 
-### cmd+m
+### cmd+shift+m
 Show server meter
 
-### cmd+s
+### cmd+shift+s
 Show server scope
 
 ### cmd+l
@@ -54,7 +54,7 @@ Increase font size
 ### cmd+minus
 Decrease font size
 
-### cmd+zero
+### cmd+0
 Reset font size
 
 ### cmd+q

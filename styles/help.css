@@ -1,5 +1,5 @@
 @import "codemirror.css";
-@import "shared.css";
+@import "editor.css";
 
 :target {
   border: 0;

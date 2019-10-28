@@ -10,10 +10,12 @@ const postPane = document.querySelector('#post')
 const iframe = helpPane.querySelector('iframe')
 const docmapCode = fs.readFileSync(`${APPSUPPORT_DIR.replace('%20', ' ')}/docmap.js`, 'utf-8')
 const mainTextArea = leftPane.querySelector('textarea')
+let mainEditor
 
 function start () {
   editor.start()
-  editor.attach(mainTextArea).focus()
+  mainEditor = editor.attach(mainTextArea)
+  mainEditor.focus()
   window.addEventListener('mousedown', onMousedown)
   document.addEventListener('keydown', onKeydown)
   document.addEventListener('click', onClick)
@@ -67,12 +69,11 @@ function onLoad () {
   }
 
   // move superclasses to bottom related
-  const superclasses = doc.querySelector('#superclasses')
-  if (superclasses) {
+  doc.querySelectorAll('#superclasses').forEach((superclasses) => {
     superclasses.remove()
     superclasses.innerHTML = 'Superclasses: ' + superclasses.innerHTML
     subheader.appendChild(superclasses)
-  }
+  })
 
   // toggle loading
   setTimeout(() => loading.setAttribute('hidden', ''), 50)
@@ -111,23 +112,15 @@ function onMousedown (event) {
 
 function onKeydown (event) {
   const { metaKey, shiftKey, key } = event
-  if (metaKey && key === 'q') {
-    if (!window.confirm('Are you sure?')) {
-      event.preventDefault()
-    } else {
-      editor.evaluate('Server.default.quit')
-    }
-  } else if (metaKey && key === '+') {
+  if (metaKey && key === '0') {
     event.preventDefault()
-    const zoom = Number(leftPane.style.zoom || 1) + 0.1
-    leftPane.style.zoom = postPane.style.zoom = zoom
-  } else if (metaKey && key === '-') {
+    leftPane.style.fontSize = postPane.style.fontSize = '1rem'
+  } else if (metaKey && (key === '+' || key === '-')) {
     event.preventDefault()
-    const zoom = Number(leftPane.style.zoom || 1) - 0.1
-    leftPane.style.zoom = postPane.style.zoom = zoom
-  } else if (metaKey && key === '0') {
-    event.preventDefault()
-    leftPane.style.zoom = postPane.style.zoom = 1
+    const increase = key === '+' ? 0.1 : -0.1
+    const fontSize = parseFloat(leftPane.style.fontSize || 1) + increase + 'rem'
+    leftPane.style.fontSize = postPane.style.fontSize = fontSize
+    mainEditor.refresh()
   } else if (metaKey && key === 'b') {
     editor.evaluate('Server.default.boot')
   } else if (metaKey && key === '.') {
@@ -148,6 +141,16 @@ function onKeydown (event) {
     postPane.toggleAttribute('hidden')
     rightPane.toggleAttribute('hidden', helpPane.hidden && postPane.hidden)
     postPane.classList.toggle('pane--full', helpPane.hidden && !postPane.hidden)
+  } else if (metaKey && key === 'd') {
+    helpPane.removeAttribute('hidden')
+    rightPane.toggleAttribute('hidden', helpPane.hidden && postPane.hidden)
+    postPane.classList.toggle('pane--full', helpPane.hidden && !postPane.hidden)
+  } else if (metaKey && key === 'q') {
+    if (window.confirm('Are you sure?')) {
+      editor.evaluate('Server.default.quit')
+    } else {
+      event.preventDefault()
+    }
   }
 }
 

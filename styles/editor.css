@@ -24,10 +24,6 @@ body {
   cursor: text;
 }
 
-.CodeMirror-cursor {
-  border-left: 1.1px solid currentColor;
-}
-
 .CodeMirror-selected,
 .CodeMirror-line::selection,
 .CodeMirror-line > span::selection,

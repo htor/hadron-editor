@@ -33,6 +33,9 @@ Show server meter
 ### cmd+s
 Show server scope
 
+### cmd+l
+Select current line(s)
+
 ### cmd+shift+k
 Comment/uncomment text selection
 

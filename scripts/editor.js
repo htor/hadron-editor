@@ -36,6 +36,7 @@ function attach (textarea) {
     autoCloseBrackets: true,
     extraKeys: {
       Tab: () => editor.replaceSelection('  '),
+      Esc: () => editor.setCursor(editor.getCursor()),
       'Cmd-Enter': () => evalRegion(editor),
       'Shift-Enter': () => evalLine(editor),
       'Shift-Cmd-K': () => editor.toggleComment(),
@@ -118,7 +119,7 @@ function markText (editor, from, to) {
 async function evaluate (code) {
   if (!code) return ''
   try {
-    const result = await sclang.interpret(code, null, true)
+    const result = await sclang.interpret(code, null, true, false)
     post(result)
   } catch (error) {
     post(stringifyError(error), 'error')
@@ -132,7 +133,7 @@ function stringifyError (value) {
     value += `\n    line: ${error.line}, char: ${error.charPos}`
     value += `\n${error.code}`
   } else if (type === 'Error') {
-    const args = error.args.map((arg) => `${arg.class} ${arg.asString}`).join(', ')
+    const args = (error.args || []).map((arg) => `${arg.class} ${arg.asString}`).join(', ')
     const receiver = error.receiver
     value = error.errorString.replace('ERROR', error.class)
     value += `\n    receiver: ${receiver.asString}, args: [${args}]`

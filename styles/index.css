@@ -56,7 +56,7 @@
 }
 
 #post.pane--full {
-  flex-grow: 1;
+  flex-grow: 1 !important;
 }
 
 #help #loading {

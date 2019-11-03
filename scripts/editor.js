@@ -40,6 +40,7 @@ function attach (textarea) {
       'Cmd-Enter': () => evalRegion(editor),
       'Shift-Enter': () => evalLine(editor),
       'Shift-Cmd-K': () => editor.toggleComment(),
+      'Shift-Cmd-D': () => duplicateLine(editor),
       'Cmd-D': () => lookupWord(editor),
       'Cmd-L': () => selectLine(editor)
     }
@@ -50,10 +51,16 @@ function attach (textarea) {
   return editor
 }
 
+function duplicateLine (editor) {
+  const cursor = editor.getCursor()
+  const line = editor.getLine(cursor.line)
+  editor.replaceRange(`\n${line}`, { line: cursor.line })
+}
+
 function selectLine (editor) {
   const cursor = editor.getCursor()
   const from = { line: cursor.line, ch: 0 }
-  const to = { line: cursor.line + 1, ch: Infinity }
+  const to = { line: cursor.line + (editor.somethingSelected() ? 1 : 0)}
   editor.setExtending(true)
   editor.extendSelection(from, to)
   editor.setExtending(false)

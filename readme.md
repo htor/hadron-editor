@@ -27,10 +27,10 @@ Evaluate code
 ### cmd+.
 Free all synths. Stop all audio output
 
-### cmd+shift+m
+### cmd+m
 Show server meter
 
-### cmd+shift+s
+### cmd+shift+m
 Show server scope
 
 ### cmd+l
@@ -42,7 +42,7 @@ Comment/uncomment text selection
 ### cmd+d
 Lookup help for word under cursor
 
-### cmd+o
+### cmd+i
 Show/hide help browser
 
 ### cmd+p
@@ -57,11 +57,20 @@ Decrease font size
 ### cmd+0
 Reset font size
 
-### cmd+q
-Quit application
-
 ### cmd+shift+p
 Clear post window
+
+### cmd+o
+Open file
+
+### cmd+s
+Save file
+
+### cmd+shift+s
+Save file as
+
+### cmd+q
+Quit application
 
 # libraries
 

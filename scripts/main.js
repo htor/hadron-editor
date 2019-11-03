@@ -1,5 +1,6 @@
 const fs = require('fs')
-const { app, dialog, BrowserWindow } = require('electron')
+const { app, dialog, Menu, BrowserWindow} = require('electron')
+const menu = require('./menu')
 let mainWindow
 
 function showError (message) {
@@ -38,6 +39,7 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+  menu.setup(mainWindow)
 }
 
 // to make iframing docs work

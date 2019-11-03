@@ -31,7 +31,7 @@
 #right.pane {
   display: flex;
   flex-direction: column;
-  border-left: 1px solid var(--color-gray);
+  border-left: 1px solid var(--color-border);
 }
 
 #right.pane[hidden] {
@@ -39,7 +39,7 @@
 }
 
 #help.pane {
-  border-bottom: 1px solid var(--color-gray);
+  border-bottom: 1px solid var(--color-border);
 }
 
 #help.pane::after {

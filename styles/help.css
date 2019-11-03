@@ -16,8 +16,8 @@
 }
 
 #menubar {
-  background: white;
-  border-bottom: 1px solid var(--color-gray);
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
   box-shadow: none;
 }
 
@@ -50,7 +50,7 @@ a.menu-link {
 
 #toc,
 .submenu {
-  background: white;
+  background: var(--color-background);
   top: 32px;
   border-top: 0;
 }
@@ -96,7 +96,7 @@ code,
 pre:not(.CodeMirror-line) {
   font: inherit;
   margin: 0;
-  background: #e8e8e8;
+  background: var(--color-gray);
   overflow-x: auto;
 }
 
@@ -127,7 +127,7 @@ a.method-name::before {
 .note,
 .warning,
 .searchlink {
-  background: #eeee;
+  background: var(--color-gray);
 }
 
 .warninglabel {
@@ -138,7 +138,8 @@ a.method-name::before {
   -webkit-appearance: none;
   padding: .3rem 0.6rem;
   font: inherit;
-  background: #f7f7f7;
+  background: var(--color-gray);
+  border: 0;
 }
 
 .cat_selected {

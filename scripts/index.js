@@ -1,4 +1,6 @@
 const fs = require('fs')
+const { remote } = require('electron')
+const { Menu, MenuItem } = remote
 const editor = require('./scripts/editor')
 const { APPSUPPORT_DIR } = require('./scripts/utils')
 
@@ -8,6 +10,7 @@ const loading = document.querySelector('#loading')
 const helpPane = document.querySelector('#help')
 const postPane = document.querySelector('#post')
 const iframe = helpPane.querySelector('iframe')
+const isDarkMode = () => localStorage.getItem('dark-mode') === 'true'
 const docmapCode = fs.readFileSync(`${APPSUPPORT_DIR.replace('%20', ' ')}/docmap.js`, 'utf-8')
 const mainTextArea = leftPane.querySelector('textarea')
 let mainEditor
@@ -19,6 +22,7 @@ function start () {
   window.addEventListener('mousedown', onMousedown)
   document.addEventListener('keydown', onKeydown)
   document.addEventListener('click', onClick)
+  document.body.classList.toggle('dark-mode', isDarkMode)
   iframe.addEventListener('load', onLoad)
   iframe.src = `file://${APPSUPPORT_DIR}/Help.html`
 }
@@ -26,6 +30,8 @@ function start () {
 function onLoad () {
   const win = iframe.contentWindow
   const doc = iframe.contentDocument
+
+  doc.documentElement.classList.toggle('dark-mode', isDarkMode())
 
   // remove styles, scripts and code blocks
   doc.querySelectorAll('.CodeMirror').forEach((el) => el.remove())
@@ -105,6 +111,7 @@ function onMousedown (event) {
   iframe.style.pointerEvents = 'none'
   window.addEventListener('mousemove', resize)
   window.addEventListener('mouseup', () => {
+    mainEditor.refresh()
     iframe.style.pointerEvents = 'auto'
     window.removeEventListener('mousemove', resize)
   })
@@ -126,15 +133,15 @@ function onKeydown (event) {
     editor.evaluate('Server.default.boot')
   } else if (metaKey && key === '.') {
     editor.evaluate('CmdPeriod.run')
-  } else if (metaKey && shiftKey && key === 's') {
-    editor.evaluate('Server.default.scope')
   } else if (metaKey && shiftKey && key === 'm') {
+    editor.evaluate('Server.default.scope')
+  } else if (metaKey && key === 'm') {
     editor.evaluate('Server.default.meter')
-  } else if (metaKey && shiftKey && key === 't') {
+  } else if (metaKey && key === 't') {
     editor.evaluate('Server.default.plotTree')
   } else if (metaKey && shiftKey && key === 'p') {
     postPane.querySelector('ul').innerHTML = ''
-  } else if (metaKey && key === 'o') {
+  } else if (metaKey && key === 'i') {
     helpPane.toggleAttribute('hidden')
     rightPane.toggleAttribute('hidden', helpPane.hidden && postPane.hidden)
     postPane.classList.toggle('pane--full', helpPane.hidden && !postPane.hidden)
@@ -147,7 +154,7 @@ function onKeydown (event) {
     rightPane.toggleAttribute('hidden', helpPane.hidden && postPane.hidden)
     postPane.classList.toggle('pane--full', helpPane.hidden && !postPane.hidden)
   } else if (metaKey && key === 'q') {
-    if (window.confirm('Are you sure?')) {
+    if (window.confirm('Sure you want to quit?')) {
       editor.evaluate('Server.default.quit')
     } else {
       event.preventDefault()

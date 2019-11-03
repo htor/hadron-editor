@@ -2,7 +2,7 @@
 
 Experimental editor for [SuperCollider](https://github.com/supercollider/supercollider) with built-in help browser and post window.
 
-<img src="images/screenshot.png" alt="screenshot of editor" title="An experimental editor for SuperCollider" style="width: 1200px; max-width: 100%">
+<img src="images/screenshot.png" alt="screenshot of editor" title="An experimental editor for SuperCollider" style="width: 1300px; max-width: 100%">
 
 # start
 

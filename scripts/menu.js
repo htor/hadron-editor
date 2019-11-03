@@ -24,7 +24,7 @@ function setup () {
         { role: 'unhide' },
         { type: 'separator' },
         {
-          label: `Quit ${app.name}`,
+          label: 'Quit',
           accelerator: 'CmdOrCtrl+Q',
           click: (event) => {
             if (window.confirm('Sure you want to quit?')) {

@@ -1,6 +1,7 @@
 # sc-editor
 
 Experimental editor for [SuperCollider](https://github.com/supercollider/supercollider) with built-in help browser and post window.
+It runs cross-platform on macOS, Windows and Linux, but at the moment only macOS is tested.
 
 <img src="images/screenshot.png" alt="screenshot of editor" title="An experimental editor for SuperCollider" style="width: 1300px; max-width: 100%">
 

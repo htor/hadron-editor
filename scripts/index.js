@@ -22,7 +22,7 @@ function start () {
   window.addEventListener('mousedown', onMousedown)
   document.addEventListener('keydown', onKeydown)
   document.addEventListener('click', onClick)
-  document.body.classList.toggle('dark-mode', isDarkMode)
+  document.body.classList.toggle('dark-mode', isDarkMode())
   iframe.addEventListener('load', onLoad)
   iframe.src = `file://${APPSUPPORT_DIR}/Help.html`
 }

@@ -1,3 +1,23 @@
+@font-face {
+  font-family: "inconsolata";
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url("../fonts/inconsolata-regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "inconsolata";
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("../fonts/inconsolata-bold.ttf") format("truetype");
+}
+
+@keyframes text-marked {
+  50% { color: white; background: var(--color-brown) }
+}
+
 :root {
   --color-gray: #dbdbdb;
   --color-gray-medium: #9e9e9e;
@@ -22,7 +42,7 @@
 html,
 body {
   box-sizing: border-box;
-  font-family: inconsolata;
+  font-family: inconsolata, monospace;
   font-size: 16px;
   height: 100%;
   margin: 0;
@@ -58,10 +78,6 @@ body {
 
 .text-marked {
   animation: text-marked .3s ease-out;
-}
-
-@keyframes text-marked {
-  50% { color: white; background: var(--color-brown) }
 }
 
 .cm-s-default .cm-keyword { color: var(--color-brown); }

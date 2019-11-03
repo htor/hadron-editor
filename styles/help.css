@@ -16,7 +16,7 @@
 }
 
 #menubar {
-  background: var(--color-background);
+  background: inherit;
   border-bottom: 1px solid var(--color-border);
   box-shadow: none;
 }
@@ -52,10 +52,6 @@ a.menu-link {
   background: var(--color-background);
   top: 32px;
   border-top: 0;
-}
-
-#search_checks {
-  background: var(--color-background);
 }
 
 #toc-container,
@@ -146,7 +142,23 @@ a.method-name::before {
   font: inherit;
   color: inherit;
   background: none;
-  border: 1px solid var(--color-gray-heavy);
+  border: 1px solid var(--color-gray-large);
+}
+
+.jump {
+  text-align: left;
+}
+
+.jump,
+#search_checks0,
+#search_checks,
+table#search_settings {
+  color: var(--color-gray-large);
+  background: inherit;
+}
+
+input[type="checkbox"]:hover {
+  cursor: pointer;
 }
 
 .cat_selected {
@@ -163,4 +175,8 @@ table {
 
 ul.inheritedmets li {
   font: inherit;
+}
+
+.result_summary {
+  color: inherit;
 }

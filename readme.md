@@ -2,6 +2,8 @@
 
 Experimental editor for [SuperCollider](https://github.com/supercollider/supercollider) with built-in help browser and post window.
 
+<img src="images/screenshot.png" alt="screenshot of editor" title="An experimental editor for SuperCollider" style="width: 1200px; max-width: 100%">
+
 # start
 
 First you need to install [SuperCollider](https://github.com/supercollider/supercollider) and [NodeJS](https://nodejs.org/en/) on your computer. Then, with [NPM](https://www.npmjs.com/) do:

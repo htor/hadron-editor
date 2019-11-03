@@ -53,7 +53,8 @@ function onLoad () {
   // make docmap avalable
   eval(fs.readFileSync(`${APPSUPPORT_DIR.replace('%20', ' ')}/docmap.js`, 'utf-8'))
 
-  // fix menubar dropdown linx
+  // fix menubar linx
+  doc.querySelectorAll('.menu-link.home').forEach((home) => home.textContent = 'Home')
   const dropdowns = doc.querySelectorAll('.menu-link[href="#"]')
   dropdowns.forEach((dropdown) => (dropdown.textContent = dropdown.textContent.replace('▼', '')))
 

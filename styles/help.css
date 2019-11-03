@@ -29,12 +29,11 @@
   background: none;
 }
 
-#menubar .menuitem:first-child a {
-  padding-left: 1rem;
-}
-
-#menubar .menuitem a.home span {
-  display: inline-block;
+#menubar .menuitem:first-child a,
+#menubar .menuitem:first-child a:hover {
+  padding-left: 0;
+  margin-left: 1rem;
+  background: none;
 }
 
 a.menu-link {
@@ -55,6 +54,10 @@ a.menu-link {
   border-top: 0;
 }
 
+#search_checks {
+  background: var(--color-background);
+}
+
 #toc-container,
 #total_count {
   display: none;
@@ -64,6 +67,7 @@ a.menu-link {
   font: inherit;
   font-style: normal;
   opacity: .8;
+  color: var(--color-gray-heavy);
 }
 
 h1 {
@@ -96,6 +100,7 @@ code,
 pre:not(.CodeMirror-line) {
   font: inherit;
   margin: 0;
+  color: black;
   background: var(--color-gray);
   overflow-x: auto;
 }
@@ -127,6 +132,7 @@ a.method-name::before {
 .note,
 .warning,
 .searchlink {
+  color: black;
   background: var(--color-gray);
 }
 
@@ -138,8 +144,9 @@ a.method-name::before {
   -webkit-appearance: none;
   padding: .3rem 0.6rem;
   font: inherit;
-  background: var(--color-gray);
-  border: 0;
+  color: inherit;
+  background: none;
+  border: 1px solid var(--color-gray-heavy);
 }
 
 .cat_selected {

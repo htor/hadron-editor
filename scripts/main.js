@@ -1,6 +1,5 @@
 const fs = require('fs')
-const { app, dialog, Menu, BrowserWindow} = require('electron')
-const menu = require('./menu')
+const { app, dialog, BrowserWindow } = require('electron')
 let mainWindow
 
 function showError (message) {
@@ -28,18 +27,22 @@ function createWindow () {
     showError(`${title}\n${content}\n`)
   }
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1080,
+    height: 720,
     webPreferences: {
-      nodeIntegration: true,
-      webSecurity: false
+      nodeIntegration: true
     }
   })
   mainWindow.loadFile('index.html')
   mainWindow.on('closed', () => {
     mainWindow = null
   })
-  menu.setup(mainWindow)
+  const webContents = mainWindow.webContents
+  webContents.on('did-finish-load', () => {
+    webContents.setZoomFactor(1)
+    webContents.setVisualZoomLevelLimits(1, 1)
+    webContents.setLayoutZoomLevelLimits(0, 0)
+  })
 }
 
 // to make iframing docs work

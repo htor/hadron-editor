@@ -1,6 +1,5 @@
 const fs = require('fs')
-const { remote } = require('electron')
-const { Menu, MenuItem } = remote
+const menu = require('./scripts/menu')
 const editor = require('./scripts/editor')
 const { APPSUPPORT_DIR } = require('./scripts/utils')
 
@@ -10,19 +9,16 @@ const loading = document.querySelector('#loading')
 const helpPane = document.querySelector('#help')
 const postPane = document.querySelector('#post')
 const iframe = helpPane.querySelector('iframe')
-const isDarkMode = () => localStorage.getItem('dark-mode') === 'true'
-const docmapCode = fs.readFileSync(`${APPSUPPORT_DIR.replace('%20', ' ')}/docmap.js`, 'utf-8')
-const mainTextArea = leftPane.querySelector('textarea')
 let mainEditor
 
 function start () {
   editor.start()
-  mainEditor = editor.attach(mainTextArea)
+  mainEditor = editor.attach(leftPane.querySelector('textarea'))
   mainEditor.focus()
+  menu.setup()
   window.addEventListener('mousedown', onMousedown)
-  document.addEventListener('keydown', onKeydown)
   document.addEventListener('click', onClick)
-  document.body.classList.toggle('dark-mode', isDarkMode())
+  document.body.classList.toggle('dark-mode', window.localStorage.getItem('dark-mode') === 'true')
   iframe.addEventListener('load', onLoad)
   iframe.src = `file://${APPSUPPORT_DIR}/Help.html`
 }
@@ -30,8 +26,9 @@ function start () {
 function onLoad () {
   const win = iframe.contentWindow
   const doc = iframe.contentDocument
+  const html = doc.documentElement
 
-  doc.documentElement.classList.toggle('dark-mode', isDarkMode())
+  html.classList.toggle('dark-mode', window.localStorage.getItem('dark-mode') === 'true')
 
   // remove styles, scripts and code blocks
   doc.querySelectorAll('.CodeMirror').forEach((el) => el.remove())
@@ -54,7 +51,7 @@ function onLoad () {
   doc.querySelectorAll('textarea').forEach(editor.attach)
 
   // make docmap avalable
-  eval(docmapCode)
+  eval(fs.readFileSync(`${APPSUPPORT_DIR.replace('%20', ' ')}/docmap.js`, 'utf-8'))
 
   // fix menubar dropdown linx
   const dropdowns = doc.querySelectorAll('.menu-link[href="#"]')
@@ -87,7 +84,6 @@ function onLoad () {
     doc.querySelectorAll('.CodeMirror').forEach((el) => el.remove())
     loading.removeAttribute('hidden')
   })
-  doc.addEventListener('keydown', onKeydown)
 
   // make codemirror adjust itself
   win.dispatchEvent(new window.Event('resize'))
@@ -115,51 +111,6 @@ function onMousedown (event) {
     iframe.style.pointerEvents = 'auto'
     window.removeEventListener('mousemove', resize)
   })
-}
-
-function onKeydown (event) {
-  const { metaKey, shiftKey, key } = event
-  if (metaKey && key === '0') {
-    event.preventDefault()
-    leftPane.style.fontSize = postPane.style.fontSize = '1rem'
-    mainEditor.refresh()
-  } else if (metaKey && (key === '+' || key === '-')) {
-    event.preventDefault()
-    const increase = key === '+' ? 0.1 : -0.1
-    const fontSize = parseFloat(leftPane.style.fontSize || 1) + increase + 'rem'
-    leftPane.style.fontSize = postPane.style.fontSize = fontSize
-    mainEditor.refresh()
-  } else if (metaKey && key === 'b') {
-    editor.evaluate('Server.default.boot')
-  } else if (metaKey && key === '.') {
-    editor.evaluate('CmdPeriod.run')
-  } else if (metaKey && shiftKey && key === 'm') {
-    editor.evaluate('Server.default.scope')
-  } else if (metaKey && key === 'm') {
-    editor.evaluate('Server.default.meter')
-  } else if (metaKey && key === 't') {
-    editor.evaluate('Server.default.plotTree')
-  } else if (metaKey && shiftKey && key === 'p') {
-    postPane.querySelector('ul').innerHTML = ''
-  } else if (metaKey && key === 'i') {
-    helpPane.toggleAttribute('hidden')
-    rightPane.toggleAttribute('hidden', helpPane.hidden && postPane.hidden)
-    postPane.classList.toggle('pane--full', helpPane.hidden && !postPane.hidden)
-  } else if (metaKey && key === 'p') {
-    postPane.toggleAttribute('hidden')
-    rightPane.toggleAttribute('hidden', helpPane.hidden && postPane.hidden)
-    postPane.classList.toggle('pane--full', helpPane.hidden && !postPane.hidden)
-  } else if (metaKey && key === 'd') {
-    helpPane.removeAttribute('hidden')
-    rightPane.toggleAttribute('hidden', helpPane.hidden && postPane.hidden)
-    postPane.classList.toggle('pane--full', helpPane.hidden && !postPane.hidden)
-  } else if (metaKey && key === 'q') {
-    if (window.confirm('Sure you want to quit?')) {
-      editor.evaluate('Server.default.quit')
-    } else {
-      event.preventDefault()
-    }
-  }
 }
 
 function onClick (event) {

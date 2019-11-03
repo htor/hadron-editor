@@ -37,12 +37,8 @@ function attach (textarea) {
     extraKeys: {
       Tab: () => editor.replaceSelection('  '),
       Esc: () => editor.setCursor(editor.getCursor()),
-      'Cmd-Enter': () => evalRegion(editor),
-      'Shift-Enter': () => evalLine(editor),
-      'Shift-Cmd-K': () => editor.toggleComment(),
-      'Shift-Cmd-D': () => duplicateLine(editor),
-      'Cmd-D': () => lookupWord(editor),
-      'Cmd-L': () => selectLine(editor)
+      'Cmd-D': false,
+      'Ctrl-D': false
     }
   })
   editor.on('blur', (editor) => {
@@ -60,7 +56,7 @@ function duplicateLine (editor) {
 function selectLine (editor) {
   const cursor = editor.getCursor()
   const from = { line: cursor.line, ch: 0 }
-  const to = { line: cursor.line + (editor.somethingSelected() ? 1 : 0)}
+  const to = { line: cursor.line + (editor.somethingSelected() ? 1 : 0) }
   editor.setExtending(true)
   editor.extendSelection(from, to)
   editor.setExtending(false)
@@ -193,4 +189,9 @@ function lookupWord (editor) {
 
 exports.start = start
 exports.attach = attach
+exports.selectLine = selectLine
+exports.duplicateLine = duplicateLine
 exports.evaluate = evaluate
+exports.evalLine = evalLine
+exports.evalRegion = evalRegion
+exports.lookupWord = lookupWord

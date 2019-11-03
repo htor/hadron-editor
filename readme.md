@@ -18,58 +18,64 @@ The application should start and you can type in SuperCollider code and evaluate
 
 Keyboard shortcuts for common actions:
 
-### cmd+b
+### cmd/ctrl+b
 Boot server
 
-### cmd+enter
-Evaluate code
+### cmd/ctrl+enter
+Evaluate code region
 
-### cmd+.
-Free all synths. Stop all audio output
+### alt+enter
+Evaluate code line
 
-### cmd+m
+### cmd/ctrl+.
+Hush. Free all synths. Stop all audio output
+
+### cmd/ctrl+m
 Show server meter
 
-### cmd+shift+m
+### cmd/ctrl+shift+m
 Show server scope
 
-### cmd+l
+### cmd/ctrl+l
 Select current line(s)
 
-### cmd+shift+k
+### cmd/ctrl+shift+d
+Duplicate current line
+
+### cmd/ctrl+shift+k
 Comment/uncomment text selection
 
-### cmd+d
+### cmd/ctrl+d
 Lookup help for word under cursor
 
-### cmd+i
+### cmd/ctrl+i
 Show/hide help browser
 
-### cmd+p
+### cmd/ctrl+p
 Show/hide post window
 
-### cmd+plus
+### cmd/ctrl+plus
 Increase font size
 
-### cmd+minus
+### cmd/ctrl+minus
 Decrease font size
 
-### cmd+0
+### cmd/ctrl+0
 Reset font size
 
-### cmd+shift+p
+### cmd/ctrl+shift+p
 Clear post window
 
-### cmd+o
+### cmd/ctrl+o
 Open file
 
-### cmd+s
+### cmd/ctrl+s
 Save file
 
-### cmd+shift+s
+### cmd/ctrl+shift+s
 Save file as
 
-### cmd+q
+### cmd/ctrl+q
 Quit application
 
 # libraries

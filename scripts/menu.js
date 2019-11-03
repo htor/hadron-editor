@@ -169,6 +169,20 @@ function setup () {
           click: () => editor.evaluate('Server.default.boot')
         },
         {
+          label: 'Quit server',
+          accelerator: 'CmdOrCtrl+Y',
+          click: () => editor.evaluate('Server.default.quit')
+        },
+        {
+          label: 'Reboot server',
+          accelerator: 'CmdOrCtrl+R',
+          click: () => editor.evaluate('Server.default.reboot')
+        },
+        {
+          label: 'Kill all servers',
+          click: () => editor.evaluate('Server.killAll')
+        },
+        {
           label: 'Show meter',
           accelerator: 'CmdOrCtrl+M',
           click: () => editor.evaluate('Server.default.meter')
@@ -184,18 +198,9 @@ function setup () {
           click: () => editor.evaluate('Server.default.plotTree')
         },
         {
-          label: 'Quit server',
-          accelerator: 'CmdOrCtrl+Y',
-          click: () => editor.evaluate('Server.default.quit')
-        },
-        {
-          label: 'Reboot server',
-          accelerator: 'CmdOrCtrl+R',
-          click: () => editor.evaluate('Server.default.reboot')
-        },
-        {
-          label: 'Kill all servers',
-          click: () => editor.evaluate('Server.killAll')
+          label: 'Start recording',
+          accelerator: 'CmdOrCtrl+Shift+R',
+          click: () => editor.evaluate('Recorder(s).record')
         }
       ]
     },

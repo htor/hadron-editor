@@ -27,7 +27,7 @@ Boot server
 ### cmd/ctrl+enter
 Evaluate code region
 
-### alt+enter
+### shift+enter
 Evaluate code line
 
 ### cmd/ctrl+.

@@ -146,7 +146,7 @@ function setup () {
         },
         {
           label: 'Evaluate line',
-          accelerator: 'Alt+Enter',
+          accelerator: 'Shift+Enter',
           click: () => {
             const focusedEditor = document.querySelector('.CodeMirror-focused') ||
             iframe.contentDocument.querySelector('.CodeMirror-focused')

@@ -37,6 +37,7 @@ function attach (textarea) {
     extraKeys: {
       Tab: () => editor.replaceSelection('  '),
       Esc: () => editor.setCursor(editor.getCursor()),
+      'Shift-Enter': () => evalLine(editor),
       'Cmd-D': false,
       'Ctrl-D': false
     }

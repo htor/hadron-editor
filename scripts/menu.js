@@ -200,7 +200,7 @@ function setup () {
         {
           label: 'Start recording',
           accelerator: 'CmdOrCtrl+Shift+R',
-          click: () => editor.evaluate('Recorder(s).record')
+          click: () => editor.evaluate('Server.default.record')
         }
       ]
     },

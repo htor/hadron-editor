@@ -57,7 +57,14 @@ function setup () {
           accelerator: 'CmdOrCtrl+S',
           click: async () => {
             const title = document.title
-            const path = title === 'Untitled' ? dialog.showSaveDialogSync(mainWindow) : title
+            let path
+            if (title === 'Untitled') {
+              path = dialog.showSaveDialogSync(mainWindow, {
+                filters: [{ name: 'SuperCollider', extensions: ['sc', 'scd'] }]
+              })
+            } else {
+              path = title
+            }
             if (path) {
               const file = mainEditor.getValue()
               document.title = path
@@ -69,7 +76,9 @@ function setup () {
           label: 'Save As...',
           accelerator: 'CmdOrCtrl+Shift+S',
           click: async () => {
-            const path = dialog.showSaveDialogSync(mainWindow)
+            const path = dialog.showSaveDialogSync(mainWindow, {
+              filters: [{ name: 'SuperCollider', extensions: ['sc', 'scd'] }]
+            })
             if (path) {
               const file = mainEditor.getValue()
               document.title = path

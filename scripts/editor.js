@@ -12,7 +12,6 @@ const iframe = document.querySelector('#help iframe')
 let sclang
 
 async function start () {
-  CodeMirror.defineSimpleMode('scd', syntax)
   try {
     sclang = await sc.lang.boot({
       stdin: false,
@@ -28,6 +27,7 @@ async function start () {
 }
 
 function attach (textarea) {
+  CodeMirror.defineSimpleMode('scd', syntax)
   const editor = CodeMirror.fromTextArea(textarea, {
     mode: 'scd',
     value: textarea.value,

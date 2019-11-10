@@ -30,7 +30,8 @@ function createWindow () {
     width: 1080,
     height: 720,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      webSecurity: false
     }
   })
   mainWindow.loadFile('index.html')

@@ -11,8 +11,7 @@ const postPane = document.querySelector('#post')
 const iframe = helpPane.querySelector('iframe')
 let mainEditor
 
-function start () {
-  editor.start()
+async function start () {
   mainEditor = editor.attach(leftPane.querySelector('textarea'))
   mainEditor.focus()
   menu.setup()
@@ -21,6 +20,11 @@ function start () {
   document.body.classList.toggle('dark-mode', window.localStorage.getItem('dark-mode') === 'true')
   iframe.addEventListener('load', onLoad)
   iframe.src = `file://${APPSUPPORT_DIR}/Help.html`
+  await editor.start()
+  if (!window.localStorage.getItem('help-rendered')) {
+    editor.evaluate('SCDoc.renderAll')
+    window.localStorage.setItem('help-rendered', true)
+  }
 }
 
 function onLoad () {

@@ -33,6 +33,9 @@ Evaluate code line
 ### cmd/ctrl+.
 Hush. Free all synths. Stop all audio output
 
+### cmd/ctrl+shift+l
+Recompile class library
+
 ### cmd/ctrl+m
 Show server meter
 

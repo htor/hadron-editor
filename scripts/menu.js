@@ -166,6 +166,14 @@ function setup () {
           label: 'Hush',
           accelerator: 'CmdOrCtrl+.',
           click: () => editor.evaluate('CmdPeriod.run')
+        },
+        {
+          label: 'Recompile class library',
+          accelerator: 'CmdOrCtrl+Shift+L',
+          click: async () => {
+            await editor.restart()
+            console.log('sclang restarted...');
+          }
         }
       ]
     },

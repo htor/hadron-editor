@@ -1,4 +1,4 @@
-const sc = require('supercolliderjs')
+const scjs = require('supercolliderjs')
 const CodeMirror = require('codemirror')
 require('codemirror/addon/mode/simple')
 require('codemirror/addon/edit/matchbrackets')
@@ -12,18 +12,28 @@ const iframe = document.querySelector('#help iframe')
 let sclang
 
 async function start () {
-  try {
-    sclang = await sc.lang.boot({
-      stdin: false,
-      echo: false,
-      debug: false
-    })
-  } catch (error) {
-    console.log(error)
-    showError(error)
-  }
+  CodeMirror.defineSimpleMode('scd', syntax)
+  const options = { stdin: false, echo: false, debug: false }
+  sclang = new scjs.lang.SCLang(await scjs.resolveOptions(null, options))
   sclang.on('stdout', (message) => post(message, 'info'))
   sclang.on('stderr', (message) => post(message, 'error'))
+  sclang.on('exit', () => {
+    for (const event of ['stdout', 'stderr', 'exit']) {
+      sclang.removeAllListeners(event)
+    }
+    sclang = null
+  })
+  try {
+    await sclang.boot()
+  } catch (error) {
+    console.error(error)
+    showError(error)
+  }
+}
+
+async function restart () {
+  await stop()
+  await start()
 }
 
 function attach (textarea) {
@@ -189,6 +199,7 @@ function lookupWord (editor) {
 }
 
 exports.start = start
+exports.restart = restart
 exports.attach = attach
 exports.selectLine = selectLine
 exports.duplicateLine = duplicateLine

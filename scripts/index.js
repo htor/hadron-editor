@@ -26,9 +26,10 @@ async function start () {
 function onLoad () {
   const win = iframe.contentWindow
   const doc = iframe.contentDocument
-  const html = doc.documentElement
+  const anchor = win.location.hash.replace('#' ,'')
+  const isDarkMode = window.localStorage.getItem('dark-mode') === 'true'
 
-  html.classList.toggle('dark-mode', window.localStorage.getItem('dark-mode') === 'true')
+  doc.documentElement.classList.toggle('dark-mode', isDarkMode)
 
   // remove styles, scripts and code blocks
   doc.querySelectorAll('.CodeMirror').forEach((el) => el.remove())
@@ -89,7 +90,8 @@ function onLoad () {
   // render docs before navigating to them
   doc.addEventListener('click', async (event) => {
     if (event.target.tagName === 'A' && event.target.closest('.contents')) {
-      if (event.target.href.match(/^file:.+\.html$/)) {
+      const href = event.target.href.split('#')[0]
+      if (href.match(/^file:.+\.html$/)) {
         event.preventDefault()
         await editor.evaluate(`SCDoc.prepareHelpForURL(URI("${event.target.href}"))`, true)
         iframe.src = event.target.href
@@ -99,6 +101,11 @@ function onLoad () {
 
   // make codemirror adjust itself
   win.dispatchEvent(new window.Event('resize'))
+
+  // scroll anchor into view
+  setTimeout(() => {
+    doc.querySelectorAll(`[name="${anchor}"]`).forEach((el) => el.scrollIntoView())
+  }, 50);
 }
 
 function onMousedown (event) {

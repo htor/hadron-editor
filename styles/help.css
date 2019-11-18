@@ -3,7 +3,7 @@
 
 :target {
   border: 0;
-  padding-top: 32px;
+  padding-top: calc(33px + 1em);
 }
 
 :focus {

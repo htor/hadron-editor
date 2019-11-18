@@ -130,11 +130,11 @@ function markText (editor, from, to) {
   setTimeout(() => marker.clear(), 300)
 }
 
-async function evaluate (code) {
+async function evaluate (code, silently) {
   if (!code) return ''
   try {
     const result = await sclang.interpret(code, null, true, false)
-    post(result)
+    if (!silently) post(result)
   } catch (error) {
     post(stringifyError(error), 'error')
   }
@@ -164,7 +164,7 @@ function post (message, type = 'value') {
   line.scrollIntoView()
 }
 
-function lookupWord (editor) {
+async function lookupWord (editor) {
   let range, word, page
   if (editor.somethingSelected()) {
     const from = editor.getCursor('start')
@@ -195,7 +195,9 @@ function lookupWord (editor) {
       page = `/Search.html#${word}`
     }
   }
-  iframe.src = `file://${APPSUPPORT_DIR}${page}`
+  const url = `file://${APPSUPPORT_DIR}${page}`
+  await evaluate(`SCDoc.prepareHelpForURL(URI("${url}"))`, true)
+  iframe.src = url
 }
 
 exports.start = start

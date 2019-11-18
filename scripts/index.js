@@ -12,6 +12,7 @@ const iframe = helpPane.querySelector('iframe')
 let mainEditor
 
 async function start () {
+  editor.start()
   mainEditor = editor.attach(leftPane.querySelector('textarea'))
   mainEditor.focus()
   menu.setup()
@@ -20,11 +21,6 @@ async function start () {
   document.body.classList.toggle('dark-mode', window.localStorage.getItem('dark-mode') === 'true')
   iframe.addEventListener('load', onLoad)
   iframe.src = `file://${APPSUPPORT_DIR}/Help.html`
-  await editor.start()
-  if (!window.localStorage.getItem('help-rendered')) {
-    editor.evaluate('SCDoc.renderAll')
-    window.localStorage.setItem('help-rendered', true)
-  }
 }
 
 function onLoad () {
@@ -88,6 +84,17 @@ function onLoad () {
   win.addEventListener('unload', () => {
     doc.querySelectorAll('.CodeMirror').forEach((el) => el.remove())
     loading.removeAttribute('hidden')
+  })
+
+  // render docs before navigating to them
+  doc.addEventListener('click', async (event) => {
+    if (event.target.tagName === 'A' && event.target.closest('.contents')) {
+      if (event.target.href.match(/^file:.+\.html$/)) {
+        event.preventDefault()
+        await editor.evaluate(`SCDoc.prepareHelpForURL(URI("${event.target.href}"))`, true)
+        iframe.src = event.target.href
+      }
+    }
   })
 
   // make codemirror adjust itself

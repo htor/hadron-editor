@@ -55,7 +55,7 @@ function setup () {
         {
           label: 'Save',
           accelerator: 'CmdOrCtrl+S',
-          click: async () => {
+          click: () => {
             const title = document.title
             let path
             if (title === 'Untitled') {
@@ -75,7 +75,7 @@ function setup () {
         {
           label: 'Save As...',
           accelerator: 'CmdOrCtrl+Shift+S',
-          click: async () => {
+          click: () => {
             const path = dialog.showSaveDialogSync(mainWindow, {
               filters: [{ name: 'SuperCollider', extensions: ['sc', 'scd'] }]
             })
@@ -165,14 +165,20 @@ function setup () {
         {
           label: 'Hush',
           accelerator: 'CmdOrCtrl+.',
-          click: () => editor.evaluate('CmdPeriod.run')
+          click: () => editor.evaluate('CmdPeriod.run', true)
         },
         {
           label: 'Recompile class library',
           accelerator: 'CmdOrCtrl+Shift+L',
-          click: async () => {
-            await editor.restart()
-            console.log('sclang restarted...');
+          click: () => {
+            editor.restart()
+          }
+        },
+        {
+          label: 'Re-index documentation',
+          accelerator: 'CmdOrCtrl+Shift+O',
+          click: () => {
+            editor.evaluate('SCDoc.indexAllDocuments(clearCache: false)')
           }
         }
       ]

@@ -1,6 +1,7 @@
 const fs = require('fs')
 const { getCurrentWindow, app, shell, dialog, Menu } = require('electron').remote
 const editor = require('./editor')
+const lang = require('./lang')
 
 function setup () {
   const mainWindow = getCurrentWindow()
@@ -28,7 +29,7 @@ function setup () {
           accelerator: 'CmdOrCtrl+Q',
           click: (event) => {
             if (window.confirm('Sure you want to quit?')) {
-              editor.evaluate('Server.default.quit')
+              lang.evaluate('Server.default.quit')
               app.quit()
             }
           }
@@ -165,20 +166,20 @@ function setup () {
         {
           label: 'Hush',
           accelerator: 'CmdOrCtrl+.',
-          click: () => editor.evaluate('CmdPeriod.run', true)
+          click: () => lang.evaluate('CmdPeriod.run', true)
         },
         {
           label: 'Recompile class library',
           accelerator: 'CmdOrCtrl+Shift+L',
           click: () => {
-            editor.restart()
+            lang.reboot()
           }
         },
         {
           label: 'Re-index documentation',
           accelerator: 'CmdOrCtrl+Shift+O',
           click: () => {
-            editor.evaluate('SCDoc.indexAllDocuments(clearCache: false)')
+            lang.evaluate('SCDoc.indexAllDocuments(clearCache: false)')
           }
         }
       ]
@@ -189,41 +190,41 @@ function setup () {
         {
           label: 'Boot server',
           accelerator: 'CmdOrCtrl+B',
-          click: () => editor.evaluate('Server.default.boot')
+          click: () => lang.evaluate('Server.default.boot')
         },
         {
           label: 'Quit server',
           accelerator: 'CmdOrCtrl+Y',
-          click: () => editor.evaluate('Server.default.quit')
+          click: () => lang.evaluate('Server.default.quit')
         },
         {
           label: 'Reboot server',
           accelerator: 'CmdOrCtrl+R',
-          click: () => editor.evaluate('Server.default.reboot')
+          click: () => lang.evaluate('Server.default.reboot')
         },
         {
           label: 'Kill all servers',
-          click: () => editor.evaluate('Server.killAll')
+          click: () => lang.evaluate('Server.killAll')
         },
         {
           label: 'Show meter',
           accelerator: 'CmdOrCtrl+M',
-          click: () => editor.evaluate('Server.default.meter')
+          click: () => lang.evaluate('Server.default.meter')
         },
         {
           label: 'Show scope',
           accelerator: 'CmdOrCtrl+Shift+M',
-          click: () => editor.evaluate('Server.default.scope')
+          click: () => lang.evaluate('Server.default.scope')
         },
         {
           label: 'Plot tree',
           accelerator: 'CmdOrCtrl+T',
-          click: () => editor.evaluate('Server.default.plotTree')
+          click: () => lang.evaluate('Server.default.plotTree')
         },
         {
           label: 'Start recording',
           accelerator: 'CmdOrCtrl+Shift+R',
-          click: () => editor.evaluate('Server.default.record')
+          click: () => lang.evaluate('Server.default.record')
         }
       ]
     },

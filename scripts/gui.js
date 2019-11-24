@@ -1,7 +1,8 @@
 const fs = require('fs')
-const menu = require('./scripts/menu')
-const editor = require('./scripts/editor')
-const { APPSUPPORT_DIR } = require('./scripts/utils')
+const menu = require('./menu')
+const lang = require('./lang')
+const editor = require('./editor')
+const { APPSUPPORT_DIR } = require('./utils')
 
 const leftPane = document.querySelector('#left')
 const rightPane = document.querySelector('#right')
@@ -9,24 +10,25 @@ const loading = document.querySelector('#loading')
 const helpPane = document.querySelector('#help')
 const postPane = document.querySelector('#post')
 const iframe = helpPane.querySelector('iframe')
+const output = document.querySelector('#post output')
 let mainEditor
 
 async function start () {
-  editor.start()
+  lang.boot()
+  iframe.addEventListener('load', onDocsLoad)
+  iframe.src = `file://${APPSUPPORT_DIR}/Help.html`
+  document.body.classList.toggle('dark-mode', window.localStorage.getItem('dark-mode') === 'true')
   mainEditor = editor.attach(leftPane.querySelector('textarea'))
   mainEditor.focus()
   menu.setup()
   window.addEventListener('mousedown', onMousedown)
   document.addEventListener('click', onClick)
-  document.body.classList.toggle('dark-mode', window.localStorage.getItem('dark-mode') === 'true')
-  iframe.addEventListener('load', onLoad)
-  iframe.src = `file://${APPSUPPORT_DIR}/Help.html`
 }
 
-function onLoad () {
+function onDocsLoad () {
   const win = iframe.contentWindow
   const doc = iframe.contentDocument
-  const anchor = win.location.hash.replace('#' ,'')
+  const anchor = win.location.hash.replace('#', '')
   const isDarkMode = window.localStorage.getItem('dark-mode') === 'true'
 
   doc.documentElement.classList.toggle('dark-mode', isDarkMode)
@@ -45,7 +47,7 @@ function onLoad () {
   // inject own stylesheet
   const styles = document.createElement('link')
   styles.rel = 'stylesheet'
-  styles.href = `${__dirname}/styles/help.css`
+  styles.href = `${__dirname}/../styles/help.css`
   doc.head.appendChild(styles)
 
   // setup code blocks
@@ -55,11 +57,19 @@ function onLoad () {
   eval(fs.readFileSync(`${APPSUPPORT_DIR.replace('%20', ' ')}/docmap.js`, 'utf-8'))
 
   // fix menubar linx
-  doc.querySelectorAll('.menu-link.home').forEach((home) => home.textContent = 'Home')
+  doc.querySelectorAll('.menu-link.home').forEach((home) => {
+    home.textContent = 'Home'
+  })
   const dropdowns = doc.querySelectorAll('.menu-link[href="#"]')
-  dropdowns.forEach((dropdown) => (dropdown.textContent = dropdown.textContent.replace('▼', '')))
+  dropdowns.forEach((dropdown) => {
+    dropdown.textContent = dropdown.textContent.replace('▼', '')
+  })
 
-  doc.querySelectorAll('#folder').forEach((folder) => folder.nextSibling ? (folder.nextSibling.textContent = ' > ') : '')
+  doc.querySelectorAll('#folder').forEach((folder) => {
+    if (folder.nextSibling) {
+      folder.nextSibling.textContent = ' > '
+    }
+  })
 
   // move subheader to bottom related
   doc.querySelectorAll('.doclink').forEach((el) => el.remove())
@@ -93,7 +103,7 @@ function onLoad () {
       const href = event.target.href.split('#')[0]
       if (href.match(/^file:.+\.html$/)) {
         event.preventDefault()
-        await editor.evaluate(`SCDoc.prepareHelpForURL(URI("${event.target.href}"))`, true)
+        await lang.evaluate(`SCDoc.prepareHelpForURL(URI("${event.target.href}"))`, true)
         iframe.src = event.target.href
       }
     }
@@ -105,7 +115,7 @@ function onLoad () {
   // scroll anchor into view
   setTimeout(() => {
     doc.querySelectorAll(`[name="${anchor}"]`).forEach((el) => el.scrollIntoView())
-  }, 50);
+  }, 50)
 }
 
 function onMousedown (event) {
@@ -145,4 +155,14 @@ function onClick (event) {
   }
 }
 
-start()
+function post (message, type = 'value') {
+  const lines = output.querySelector('ul')
+  const line = document.createElement('li')
+  line.classList.add(type)
+  line.innerHTML = `<pre>${message}</pre>`
+  lines.appendChild(line)
+  line.scrollIntoView()
+}
+
+exports.start = start
+exports.post = post

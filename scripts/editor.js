@@ -1,43 +1,16 @@
-const scjs = require('supercolliderjs')
 const CodeMirror = require('codemirror')
 require('codemirror/addon/mode/simple')
 require('codemirror/addon/edit/matchbrackets')
 require('codemirror/addon/edit/closebrackets')
 require('codemirror/addon/comment/comment')
-const { showError } = require('electron').remote.require('./main')
 const { APPSUPPORT_DIR } = require('./utils')
-const syntax = require('./syntax.js')
-const output = document.querySelector('#post output')
+const syntax = require('./syntax')
+const lang = require('./lang')
+
 const iframe = document.querySelector('#help iframe')
-let sclang
-
-async function start () {
-  CodeMirror.defineSimpleMode('scd', syntax)
-  const options = { stdin: false, echo: false, debug: false }
-  sclang = new scjs.lang.SCLang(await scjs.resolveOptions(null, options))
-  sclang.on('stdout', (message) => post(message, 'info'))
-  sclang.on('stderr', (message) => post(message, 'error'))
-  sclang.on('exit', () => {
-    for (const event of ['stdout', 'stderr', 'exit']) {
-      sclang.removeAllListeners(event)
-    }
-    sclang = null
-  })
-  try {
-    await sclang.boot()
-  } catch (error) {
-    console.error(error)
-    showError(error)
-  }
-}
-
-async function restart () {
-  await stop()
-  await start()
-}
+CodeMirror.defineSimpleMode('scd', syntax)
 
 function attach (textarea) {
-  CodeMirror.defineSimpleMode('scd', syntax)
   const editor = CodeMirror.fromTextArea(textarea, {
     mode: 'scd',
     value: textarea.value,
@@ -83,7 +56,7 @@ function evalLine (editor) {
     from = { line: cursor.line, ch: 0 }
     to = { line: cursor.line, ch: Infinity }
   }
-  evaluate(editor.getRange(from, to))
+  lang.evaluate(editor.getRange(from, to))
   markText(editor, from, to)
 }
 
@@ -118,7 +91,7 @@ function evalRegion (editor) {
   if (range) {
     const from = { line: range[0], ch: 0 }
     const to = { line: range[1], ch: Infinity }
-    evaluate(editor.getRange(from, to))
+    lang.evaluate(editor.getRange(from, to))
     markText(editor, from, to)
   } else {
     evalLine(editor)
@@ -128,40 +101,6 @@ function evalRegion (editor) {
 function markText (editor, from, to) {
   const marker = editor.markText(from, to, { className: 'text-marked' })
   setTimeout(() => marker.clear(), 300)
-}
-
-async function evaluate (code, silently) {
-  if (!code) return ''
-  try {
-    const result = await sclang.interpret(code, null, true, false)
-    if (!silently) post(result)
-  } catch (error) {
-    post(stringifyError(error), 'error')
-  }
-}
-
-function stringifyError (value) {
-  const { type, error } = value
-  if (type === 'SyntaxError') {
-    value = `${type}: ${error.msg}`
-    value += `\n    line: ${error.line}, char: ${error.charPos}`
-    value += `\n${error.code}`
-  } else if (type === 'Error') {
-    const args = (error.args || []).map((arg) => `${arg.class} ${arg.asString}`).join(', ')
-    const receiver = error.receiver
-    value = error.errorString.replace('ERROR', error.class)
-    value += `\n    receiver: ${receiver.asString}, args: [${args}]`
-  }
-  return value
-}
-
-function post (message, type = 'value') {
-  const lines = output.querySelector('ul')
-  const line = document.createElement('li')
-  line.classList.add(type)
-  line.innerHTML = `<pre>${message}</pre>`
-  lines.appendChild(line)
-  line.scrollIntoView()
 }
 
 async function lookupWord (editor) {
@@ -196,16 +135,13 @@ async function lookupWord (editor) {
     }
   }
   const url = `file://${APPSUPPORT_DIR}${page}`
-  await evaluate(`SCDoc.prepareHelpForURL(URI("${url}"))`, true)
+  await lang.evaluate(`SCDoc.prepareHelpForURL(URI("${url}"))`, true)
   iframe.src = url
 }
 
-exports.start = start
-exports.restart = restart
 exports.attach = attach
 exports.selectLine = selectLine
 exports.duplicateLine = duplicateLine
-exports.evaluate = evaluate
 exports.evalLine = evalLine
 exports.evalRegion = evalRegion
 exports.lookupWord = lookupWord

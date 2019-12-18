@@ -134,7 +134,7 @@ async function lookupWord (editor) {
       page = `/Search.html#${word}`
     }
   }
-  const url = `file://${APPSUPPORT_DIR}${page}`
+  const url = `file://${APPSUPPORT_DIR.replace(' ', '%20')}${page}`
   await lang.evaluate(`SCDoc.prepareHelpForURL(URI("${url}"))`, true)
   iframe.src = url
 }

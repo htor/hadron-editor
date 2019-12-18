@@ -1,17 +1,31 @@
 const fs = require('fs')
 const { app, dialog, BrowserWindow } = require('electron')
+const { INSTALLATION_DIR, APPSUPPORT_DIR } = require('./utils')
 let mainWindow
 
 function showError (message) {
   const target = mainWindow || null
+  const advice = 'See /tmp/sc-editor.log for details'
   dialog.showMessageBox(target, {
     type: 'error',
     message: 'Oops! Something bad happened',
-    detail: 'See /tmp/sc-editor.log for details'
+    detail: message ? `${message}\n\n${advice}` : advice
   })
-  message = `\n${new Date().toLocaleString()}\n${message.toString()}`
+  message = `\n${new Date().toLocaleString()}\nError: ${message.toString()}`
   console.error(message)
   fs.appendFileSync('/tmp/sc-editor.log', message)
+}
+
+function checkInstallation () {
+  if (!fs.existsSync(INSTALLATION_DIR)) {
+    showError('Can\'t find the SuperCollider installation. ' +
+              'Have you installed it in a non-standard location?')
+    app.exit(1)
+  } else if (!fs.existsSync(APPSUPPORT_DIR)) {
+    showError('Can\'t find the SuperCollider application files. ' +
+              'Please open SuperCollider at least once first to create them.')
+    app.exit(1)
+  }
 }
 
 function symlinkStyles () {
@@ -51,6 +65,7 @@ function createWindow () {
 app.commandLine.appendSwitch('disable-site-isolation-trials')
 
 app.on('ready', async () => {
+  checkInstallation()
   symlinkStyles()
   createWindow()
 })

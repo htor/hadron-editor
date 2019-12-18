@@ -16,7 +16,7 @@ let mainEditor
 async function start () {
   lang.boot()
   iframe.addEventListener('load', onDocsLoad)
-  iframe.src = `file://${APPSUPPORT_DIR}/Help.html`
+  iframe.src = `file://${APPSUPPORT_DIR.replace(' ', '%20')}/Help.html`
   document.body.classList.toggle('dark-mode', window.localStorage.getItem('dark-mode') === 'true')
   mainEditor = editor.attach(leftPane.querySelector('textarea'))
   mainEditor.focus()
@@ -54,7 +54,7 @@ function onDocsLoad () {
   doc.querySelectorAll('textarea').forEach(editor.attach)
 
   // make docmap avalable
-  eval(fs.readFileSync(`${APPSUPPORT_DIR.replace('%20', ' ')}/docmap.js`, 'utf-8'))
+  eval(fs.readFileSync(`${APPSUPPORT_DIR}/docmap.js`, 'utf-8'))
 
   // fix menubar linx
   doc.querySelectorAll('.menu-link.home').forEach((home) => {

@@ -331,7 +331,7 @@ function setup () {
         {
           label: 'Keyboard shortcuts',
           click: () => {
-            shell.openExternal('https://github.com/htor/sc-editor/#usage')
+            shell.openExternal('https://github.com/htor/hadron-editor/#usage')
           }
         }
       ]

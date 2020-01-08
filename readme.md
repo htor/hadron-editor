@@ -1,21 +1,16 @@
-# sc-editor
+
+# hadron-editor 
 
 Experimental editor for [SuperCollider](https://github.com/supercollider/supercollider) with built-in help browser and post window.
-It runs cross-platform on macOS, Windows and Linux, but at the moment only macOS is tested.
+It runs on macOS
+
 
 <img src="images/screenshot.png" alt="screenshot of editor" title="An experimental editor for SuperCollider" style="width: 1300px; max-width: 100%">
 
-# start
+# installation
 
-First you need to install [SuperCollider](https://github.com/supercollider/supercollider) and [NodeJS](https://nodejs.org/en/) on your computer. Then, with [NPM](https://www.npmjs.com/) do:
-
-```
-npm install
-npm start
-```
-
-The application should start and you can type in SuperCollider code and evaluate it with `Cmd+Enter`.
-
+Download [Hadron-1.0.0.dmg](https://hermantorjussen.no/Hadron-1.0.0.dmg), open it and drag Hadron.app to /Applications.
+Open the application, type in SuperCollider code and evaluate it with `Cmd+Enter`.
 
 # usage
 
@@ -84,9 +79,24 @@ Save file as
 ### cmd/ctrl+q
 Quit application
 
+# developing
+
+First you need to install [SuperCollider](https://github.com/supercollider/supercollider) and [NodeJS](https://nodejs.org/en/) on your computer. Then, with [NPM](https://www.npmjs.com/) do:
+
+```
+npm install
+npm start
+```
+
+The application should start automatically.
+
 # libraries
 
 The editor is built with [supercolliderjs](https://github.com/crucialfelix/supercolliderjs) and [Electron](https://electronjs.org/docs). For code editing, the incredible [codemirror](https://codemirror.net/) library is used.
+
+# logo
+
+
 
 
 # license

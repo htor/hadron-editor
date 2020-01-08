@@ -1,23 +1,21 @@
 {
-  "name": "sceditor",
-  "version": "0.0.1",
+  "name": "hadron-editor",
+  "version": "1.0.0",
   "description": "Experimental editor for SuperCollider with built-in help browser and post window",
-  "repository": "https://github.com/htor/sc-editor",
+  "repository": "https://github.com/htor/hadron-editor",
   "license": "MIT",
   "private": "true",
   "main": "scripts/main.js",
   "scripts": {
-    "start": "electron .",
-    "test": "standard -v",
+    "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make && rm -rf out/sceditor-darwin-x64"
+    "make": "npm run make-icon && electron-forge make",
+    "make-icon": "python make-iconset.py images/logo.png && iconutil -c icns images/logo.iconset",
+    "test": "standard -v"
   },
   "devDependencies": {
     "@electron-forge/cli": "6.0.0-beta.45",
-    "@electron-forge/maker-deb": "6.0.0-beta.45",
-    "@electron-forge/maker-rpm": "6.0.0-beta.45",
-    "@electron-forge/maker-squirrel": "6.0.0-beta.45",
-    "@electron-forge/maker-zip": "6.0.0-beta.45",
+    "@electron-forge/maker-dmg": "^6.0.0-beta.47",
     "electron": "6.0.11",
     "standard": "^14.3.1"
   },
@@ -28,27 +26,12 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "icon": "images/logo"
+        "icon": "images/logo",
+        "name": "Hadron"
       },
       "makers": [
         {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "sc-editor"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
+          "name": "@electron-forge/maker-dmg",
           "config": {}
         }
       ]

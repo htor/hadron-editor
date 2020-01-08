@@ -5,7 +5,7 @@ let mainWindow
 
 function showError (message) {
   const target = mainWindow || null
-  const advice = 'See /tmp/sc-editor.log for details'
+  const advice = 'See /tmp/hadron-editor.log for details'
   dialog.showMessageBox(target, {
     type: 'error',
     message: 'Oops! Something bad happened',
@@ -13,7 +13,7 @@ function showError (message) {
   })
   message = `\n${new Date().toLocaleString()}\nError: ${message.toString()}`
   console.error(message)
-  fs.appendFileSync('/tmp/sc-editor.log', message)
+  fs.appendFileSync('/tmp/hadron-editor.log', message)
 }
 
 function checkInstallation () {

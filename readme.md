@@ -8,8 +8,7 @@ macOS editor for [SuperCollider](https://github.com/supercollider/supercollider)
 
 # installation
 
-Download [Hadron-1.0.0.dmg](https://hermantorjussen.no/Hadron-1.0.0.dmg), open it and drag Hadron.app to /Applications.
-Open the application, type in SuperCollider code and evaluate it with `Cmd+Enter`.
+First install [SuperCollider](https://github.com/supercollider/supercollider) and place it under /Applications/SuperCollider/SuperCollider.app. Then download [Hadron-1.0.0.dmg](https://hermantorjussen.no/Hadron-1.0.0.dmg), open it and drag Hadron.app to /Applications. Now you can start the application, type in SuperCollider code and evaluate it with `Cmd+Enter`.
 
 # usage
 

@@ -15,67 +15,67 @@ Open the application, type in SuperCollider code and evaluate it with `Cmd+Enter
 
 Keyboard shortcuts for common actions:
 
-### cmd/ctrl+b
+### cmd+b
 Boot server
 
-### cmd/ctrl+enter
+### cmd+enter
 Evaluate code region
 
 ### shift+enter
 Evaluate code line
 
-### cmd/ctrl+.
+### cmd+.
 Hush. Free all synths. Stop all audio output
 
-### cmd/ctrl+shift+l
+### cmd+shift+l
 Recompile class library
 
-### cmd/ctrl+m
+### cmd+m
 Show server meter
 
-### cmd/ctrl+shift+m
+### cmd+shift+m
 Show server scope
 
-### cmd/ctrl+l
+### cmd+l
 Select current line(s)
 
-### cmd/ctrl+shift+d
+### cmd+shift+d
 Duplicate current line
 
-### cmd/ctrl+shift+k
+### cmd+shift+k
 Comment/uncomment text selection
 
-### cmd/ctrl+d
+### cmd+d
 Lookup help for word under cursor
 
-### cmd/ctrl+i
+### cmd+i
 Show/hide help browser
 
-### cmd/ctrl+p
+### cmd+p
 Show/hide post window
 
-### cmd/ctrl+plus
+### cmd+plus
 Increase font size
 
-### cmd/ctrl+minus
+### cmd+minus
 Decrease font size
 
-### cmd/ctrl+0
+### cmd+0
 Reset font size
 
-### cmd/ctrl+shift+p
+### cmd+shift+p
 Clear post window
 
-### cmd/ctrl+o
+### cmd+o
 Open file
 
-### cmd/ctrl+s
+### cmd+s
 Save file
 
-### cmd/ctrl+shift+s
+### cmd+shift+s
 Save file as
 
-### cmd/ctrl+q
+### cmd+q
 Quit application
 
 # developing
@@ -92,11 +92,6 @@ The application should start automatically.
 # libraries
 
 The editor is built with [supercolliderjs](https://github.com/crucialfelix/supercolliderjs) and [Electron](https://electronjs.org/docs). For code editing, the [codemirror](https://codemirror.net/) library is used.
-
-# logo
-
-
-
 
 # license
 

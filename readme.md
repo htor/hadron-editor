@@ -1,8 +1,7 @@
 
-# hadron-editor 
+# hadron-editor
 
-Experimental editor for [SuperCollider](https://github.com/supercollider/supercollider) with built-in help browser and post window.
-It runs on macOS
+macOS editor for [SuperCollider](https://github.com/supercollider/supercollider) with built-in help browser and post window.
 
 
 <img src="images/screenshot.png" alt="screenshot of editor" title="An experimental editor for SuperCollider" style="width: 1300px; max-width: 100%">
@@ -92,7 +91,7 @@ The application should start automatically.
 
 # libraries
 
-The editor is built with [supercolliderjs](https://github.com/crucialfelix/supercolliderjs) and [Electron](https://electronjs.org/docs). For code editing, the incredible [codemirror](https://codemirror.net/) library is used.
+The editor is built with [supercolliderjs](https://github.com/crucialfelix/supercolliderjs) and [Electron](https://electronjs.org/docs). For code editing, the [codemirror](https://codemirror.net/) library is used.
 
 # logo
 

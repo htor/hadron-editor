@@ -86,7 +86,7 @@ Quit application
 
 # libraries
 
-The editor is built with [supercolliderjs](https://github.com/crucialfelix/supercolliderjs) and [Electron](https://electronjs.org/docs). For code editing, the incredible [codemirror](https://codemirror.net/) library is used.
+The editor is built with [supercolliderjs](https://github.com/crucialfelix/supercolliderjs) and [Electron](https://electronjs.org/docs). For code editing, the [codemirror](https://codemirror.net/) library is used.
 
 
 # license

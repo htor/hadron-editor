@@ -2,39 +2,32 @@
   "name": "hadron-editor",
   "version": "1.0.0",
   "description": "Experimental editor for SuperCollider with built-in help browser and post window",
-  "repository": "https://github.com/htor/hadron-editor",
+  "repository": "https://github.com/htor/hadron-editor.git",
+  "author": "htor",
   "license": "MIT",
   "private": "true",
   "main": "scripts/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "npm run make-icon && electron-forge make",
-    "make-icon": "python make-iconset.py images/logo.png && iconutil -c icns images/logo.iconset",
+    "make": "electron-forge make",
+    "make-icon": "python configs/make-iconset.py images/logo.png && iconutil -c icns images/logo.iconset",
     "test": "standard -v"
   },
   "devDependencies": {
     "@electron-forge/cli": "6.0.0-beta.45",
     "@electron-forge/maker-dmg": "^6.0.0-beta.47",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.45",
     "electron": "6.0.11",
     "standard": "^14.3.1"
   },
   "dependencies": {
     "codemirror": "^5.48.4",
+    "electron-squirrel-startup": "^1.0.0",
+    "glob": "^7.1.6",
     "supercolliderjs": "^0.14.2"
   },
   "config": {
-    "forge": {
-      "packagerConfig": {
-        "icon": "images/logo",
-        "name": "Hadron"
-      },
-      "makers": [
-        {
-          "name": "@electron-forge/maker-dmg",
-          "config": {}
-        }
-      ]
-    }
+    "forge": "./configs/forge-config.js"
   }
 }

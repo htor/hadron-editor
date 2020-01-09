@@ -1,27 +1,32 @@
 const fs = require('fs')
+const path = require('path')
+const glob = require('glob')
 const { app, dialog, BrowserWindow } = require('electron')
-const { INSTALLATION_DIR, APPSUPPORT_DIR } = require('./utils')
+const { TEMP_PATH, INSTALLATION_PATH, APPSUPPORT_PATH } = require('./utils')
 let mainWindow
+
+if (require('electron-squirrel-startup')) return
 
 function showError (message) {
   const target = mainWindow || null
-  const advice = 'See /tmp/hadron-editor.log for details'
-  dialog.showMessageBox(target, {
+  const logFile = path.resolve(TEMP_PATH, 'hadron-editor.txt')
+  const advice = `See ${logFile} for details`
+  dialog.showMessageBoxSync(target, {
     type: 'error',
     message: 'Oops! Something bad happened',
     detail: message ? `${message}\n\n${advice}` : advice
   })
   message = `\n${new Date().toLocaleString()}\nError: ${message.toString()}`
   console.error(message)
-  fs.appendFileSync('/tmp/hadron-editor.log', message)
+  fs.appendFileSync(logFile, message)
 }
 
 function checkInstallation () {
-  if (!fs.existsSync(INSTALLATION_DIR)) {
+  if (!fs.existsSync(INSTALLATION_PATH)) {
     showError('Can\'t find the SuperCollider installation. ' +
               'Have you installed it in a non-standard location?')
     app.exit(1)
-  } else if (!fs.existsSync(APPSUPPORT_DIR)) {
+  } else if (!fs.existsSync(APPSUPPORT_PATH)) {
     showError('Can\'t find the SuperCollider application files. ' +
               'Please open SuperCollider at least once first to create them.')
     app.exit(1)
@@ -45,7 +50,8 @@ function createWindow () {
     height: 720,
     webPreferences: {
       nodeIntegration: true,
-      webSecurity: false
+      webSecurity: false,
+      allowRunningInsecureContent: true
     }
   })
   mainWindow.loadFile('index.html')

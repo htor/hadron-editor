@@ -1,5 +1,6 @@
 const scjs = require('supercolliderjs')
 const { showError } = require('electron').remote.require('./main')
+const { INSTALLATION_PATH } = require('./utils')
 const gui = require('./gui')
 let sclang
 
@@ -7,7 +8,8 @@ async function boot () {
   const options = {
     stdin: false,
     echo: false,
-    debug: false
+    debug: false,
+    sclang: INSTALLATION_PATH
   }
   sclang = new scjs.lang.SCLang(await scjs.resolveOptions(null, options))
   sclang.on('stdout', (message) => gui.post(message, 'info'))

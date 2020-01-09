@@ -1,8 +1,9 @@
 const fs = require('fs')
+const path = require('path')
 const menu = require('./menu')
 const lang = require('./lang')
 const editor = require('./editor')
-const { APPSUPPORT_DIR } = require('./utils')
+const { APPSUPPORT_PATH } = require('./utils')
 
 const leftPane = document.querySelector('#left')
 const rightPane = document.querySelector('#right')
@@ -12,11 +13,13 @@ const postPane = document.querySelector('#post')
 const iframe = helpPane.querySelector('iframe')
 const output = document.querySelector('#post output')
 let mainEditor
+var docmap
 
 async function start () {
   lang.boot()
   iframe.addEventListener('load', onDocsLoad)
-  iframe.src = `file://${APPSUPPORT_DIR.replace(' ', '%20')}/Help.html`
+  iframe.src = `file://${APPSUPPORT_PATH.replace(/\\/g, '/').replace(/ /g, '%20')}/Help.html`
+  // iframe.src = `file:///C:/Users/htor/Programming/hadron-editor/test.html`
   document.body.classList.toggle('dark-mode', window.localStorage.getItem('dark-mode') === 'true')
   mainEditor = editor.attach(leftPane.querySelector('textarea'))
   mainEditor.focus()
@@ -54,7 +57,7 @@ function onDocsLoad () {
   doc.querySelectorAll('textarea').forEach(editor.attach)
 
   // make docmap avalable
-  eval(fs.readFileSync(`${APPSUPPORT_DIR}/docmap.js`, 'utf-8'))
+  eval(fs.readFileSync(path.resolve(APPSUPPORT_PATH, 'docmap.js'), 'utf-8'))
 
   // fix menubar linx
   doc.querySelectorAll('.menu-link.home').forEach((home) => {
@@ -156,6 +159,7 @@ function onClick (event) {
 }
 
 function post (message, type = 'value') {
+  if (!message.trim()) return
   const lines = output.querySelector('ul')
   const line = document.createElement('li')
   line.classList.add(type)

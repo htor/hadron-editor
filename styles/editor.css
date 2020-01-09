@@ -51,7 +51,7 @@ body {
 }
 
 .CodeMirror {
-  height: 100%;
+  height: calc(100% - 2rem);
   padding: 1rem;
   font: inherit;
   cursor: text;
@@ -61,6 +61,10 @@ body {
 
 .CodeMirror-cursor {
   border-color: var(--color-foreground);
+}
+
+.CodeMirror-scroll {
+  overflow: hidden !important;
 }
 
 .CodeMirror-selected,

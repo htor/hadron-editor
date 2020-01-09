@@ -3,7 +3,7 @@ require('codemirror/addon/mode/simple')
 require('codemirror/addon/edit/matchbrackets')
 require('codemirror/addon/edit/closebrackets')
 require('codemirror/addon/comment/comment')
-const { APPSUPPORT_DIR } = require('./utils')
+const { APPSUPPORT_PATH } = require('./utils')
 const syntax = require('./syntax')
 const lang = require('./lang')
 
@@ -15,6 +15,7 @@ function attach (textarea) {
     mode: 'scd',
     value: textarea.value,
     lineWrapping: true,
+    viewportMargin: Infinity,
     matchBrackets: true,
     autoCloseBrackets: true,
     extraKeys: {
@@ -134,7 +135,7 @@ async function lookupWord (editor) {
       page = `/Search.html#${word}`
     }
   }
-  const url = `file://${APPSUPPORT_DIR.replace(' ', '%20')}${page}`
+  const url = `file://${APPSUPPORT_PATH.replace(' ', '%20')}${page}`
   await lang.evaluate(`SCDoc.prepareHelpForURL(URI("${url}"))`, true)
   iframe.src = url
 }

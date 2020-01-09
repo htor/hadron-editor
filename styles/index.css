@@ -14,7 +14,8 @@
 
 #left.pane,
 #right.pane {
-  height: 100%;
+  height: calc(100% - 1px);
+  border-top: 1px solid var(--color-border);
 }
 
 #left.pane::after {
@@ -40,6 +41,7 @@
 
 #help.pane {
   border-bottom: 1px solid var(--color-border);
+  overflow-y: hidden;
 }
 
 #help.pane::after {
@@ -79,7 +81,7 @@
 #help nav {
   position: absolute;
   top: .4em;
-  right: .8em;
+  right: 1.4em;
   text-align: right;
   pointer-events: none;
   z-index: 2;

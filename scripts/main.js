@@ -84,6 +84,7 @@ app.on('activate', () => {
 
 app.on('window-all-closed', async () => {
   mainWindow = null
+  app.quit()
 })
 
 exports.showError = showError

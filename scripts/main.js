@@ -65,7 +65,7 @@ function createWindow () {
     webContents.setVisualZoomLevelLimits(1, 1)
     webContents.setLayoutZoomLevelLimits(0, 0)
   })
-  webContents.openDevTools()
+  // webContents.openDevTools()
 }
 
 // to make iframing docs work

@@ -16,7 +16,7 @@ module.exports = {
       platforms: ['win32'],
       config: (arch) => {
         return {
-          setupExe: `Hadron-${package.version}-${arch} setup.exe`,
+          setupExe: `Hadron-${package.version}.exe`,
           setupIcon: path.resolve(__dirname, '..', 'images', 'logo.ico'),
           noMsi: true
         }

@@ -1,6 +1,6 @@
 {
   "name": "hadron-editor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Experimental editor for SuperCollider with built-in help browser and post window",
   "repository": "https://github.com/htor/hadron-editor.git",
   "author": "htor",

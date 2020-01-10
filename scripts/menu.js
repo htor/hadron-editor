@@ -28,10 +28,7 @@ function setup () {
           label: 'Quit',
           accelerator: 'CmdOrCtrl+Q',
           click: (event) => {
-            if (window.confirm('Sure you want to quit?')) {
-              lang.evaluate('Server.default.quit')
-              app.quit()
-            }
+            app.quit()
           }
         }
       ]

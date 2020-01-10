@@ -1,5 +1,7 @@
 const fs = require('fs')
 const path = require('path')
+const { app } = require('electron').remote
+const { showConfirmation } = require('electron').remote.require('./main')
 const menu = require('./menu')
 const lang = require('./lang')
 const editor = require('./editor')
@@ -19,13 +21,13 @@ async function start () {
   lang.boot()
   iframe.addEventListener('load', onDocsLoad)
   iframe.src = `file://${APPSUPPORT_PATH.replace(/\\/g, '/').replace(/ /g, '%20')}/Help.html`
-  // iframe.src = `file:///C:/Users/htor/Programming/hadron-editor/test.html`
   document.body.classList.toggle('dark-mode', window.localStorage.getItem('dark-mode') === 'true')
   mainEditor = editor.attach(leftPane.querySelector('textarea'))
   mainEditor.focus()
   menu.setup()
-  window.addEventListener('mousedown', onMousedown)
   document.addEventListener('click', onClick)
+  window.addEventListener('mousedown', onMousedown)
+  window.addEventListener('beforeunload', onQuit)
 }
 
 function onDocsLoad () {
@@ -155,6 +157,17 @@ function onClick (event) {
     } else if (target.id === 'forward') {
       iframe.contentWindow.history.forward()
     }
+  }
+}
+
+async function onQuit () {
+  const question = 'Sure you want to quit?'
+  const message = 'You might have unsaved work.'
+  const choice = showConfirmation(question, message)
+  if (choice === 0) {
+    await lang.evaluate('Server.default.quit')
+    await lang.quit()
+    app.exit(0)
   }
 }
 

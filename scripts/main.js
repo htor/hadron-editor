@@ -21,6 +21,16 @@ function showError (message) {
   fs.appendFileSync(logFile, message)
 }
 
+function showConfirmation (question, message) {
+  const target = mainWindow || null
+  return dialog.showMessageBoxSync(target, {
+    type: 'question',
+    message: question,
+    buttons: ['OK', 'Cancel'],
+    detail: message
+  })
+}
+
 function checkInstallation () {
   if (!fs.existsSync(INSTALLATION_PATH)) {
     showError('Can\'t find the SuperCollider installation. ' +
@@ -33,14 +43,6 @@ function checkInstallation () {
   }
 }
 
-function symlinkStyles () {
-  const styles = require.resolve('codemirror/lib/codemirror.css')
-  try {
-    fs.symlinkSync(styles, 'styles/codemirror.css')
-  } catch (err) {
-  }
-}
-
 function createWindow () {
   dialog.showErrorBox = (title, content) => {
     showError(`${title}\n${content}\n`)
@@ -50,8 +52,7 @@ function createWindow () {
     height: 720,
     webPreferences: {
       nodeIntegration: true,
-      webSecurity: false,
-      allowRunningInsecureContent: true
+      webSecurity: false
     }
   })
   mainWindow.loadFile('index.html')
@@ -64,7 +65,7 @@ function createWindow () {
     webContents.setVisualZoomLevelLimits(1, 1)
     webContents.setLayoutZoomLevelLimits(0, 0)
   })
-  // webContents.openDevTools()
+  webContents.openDevTools()
 }
 
 // to make iframing docs work
@@ -72,7 +73,6 @@ app.commandLine.appendSwitch('disable-site-isolation-trials')
 
 app.on('ready', async () => {
   checkInstallation()
-  symlinkStyles()
   createWindow()
 })
 
@@ -82,9 +82,5 @@ app.on('activate', () => {
   }
 })
 
-app.on('window-all-closed', async () => {
-  mainWindow = null
-  app.quit()
-})
-
 exports.showError = showError
+exports.showConfirmation = showConfirmation

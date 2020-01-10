@@ -28,9 +28,13 @@ async function boot () {
   }
 }
 
-async function reboot () {
+async function quit () {
   await sclang.quit()
   sclang = null
+}
+
+async function reboot () {
+  await quit()
   await boot()
 }
 
@@ -62,5 +66,6 @@ function stringifyError (value) {
 }
 
 exports.boot = boot
+exports.quit = quit
 exports.reboot = reboot
 exports.evaluate = evaluate

@@ -8,12 +8,12 @@ Editor for [SuperCollider](https://github.com/supercollider/supercollider) with 
 
 # installation
 
-## Mac
+### mac
 
 * Install [SuperCollider](https://supercollider.github.io/download) using the DMG file and place it under /Applications/SuperCollider/SuperCollider.app.
 * Download [Hadron-1.0.0.dmg](https://hermantorjussen.no/Hadron-1.0.0.dmg), open it and drag Hadron.app to /Applications.
 
-## Windows
+### windows
 
 * Install [SuperCollider](https://supercollider.github.io/download) using the EXE installer and use the suggested location.
 * Download [Hadron-1.0.0.exe](https://hermantorjussen.no/Hadron-1.0.0.dmg), run it and let the installer finish. It will show a greenish animation while installing.

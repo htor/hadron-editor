@@ -27,7 +27,7 @@ async function start () {
   menu.setup()
   document.addEventListener('click', onClick)
   window.addEventListener('mousedown', onMousedown)
-  window.addEventListener('beforeunload', onQuit)
+  window.onbeforeunload = onQuit
 }
 
 function onDocsLoad () {
@@ -160,7 +160,7 @@ function onClick (event) {
   }
 }
 
-async function onQuit () {
+async function onQuit (event) {
   const question = 'Sure you want to quit?'
   const message = 'You might have unsaved work.'
   const choice = showConfirmation(question, message)
@@ -168,6 +168,8 @@ async function onQuit () {
     await lang.evaluate('Server.default.quit')
     await lang.quit()
     app.exit(0)
+  } else {
+    event.preventDefault()
   }
 }
 

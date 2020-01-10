@@ -1,80 +1,88 @@
 
 # hadron-editor
 
-macOS editor for [SuperCollider](https://github.com/supercollider/supercollider) with built-in help browser and post window.
+Editor for [SuperCollider](https://github.com/supercollider/supercollider) with built-in help browser and post window. Runs on Mac and Windows.
 
 
 <img src="images/screenshot.png" alt="screenshot of editor" title="An experimental editor for SuperCollider" style="width: 1300px; max-width: 100%">
 
 # installation
 
-First install [SuperCollider](https://github.com/supercollider/supercollider) and place it under /Applications/SuperCollider/SuperCollider.app. Then download [Hadron-1.0.0.dmg](https://hermantorjussen.no/Hadron-1.0.0.dmg), open it and drag Hadron.app to /Applications. Now you can start the application, type in SuperCollider code and evaluate it with `Cmd+Enter`.
+## Mac
+
+* Install [SuperCollider](https://supercollider.github.io/download) using the DMG file and place it under /Applications/SuperCollider/SuperCollider.app.
+* Download [Hadron-1.0.0.dmg](https://hermantorjussen.no/Hadron-1.0.0.dmg), open it and drag Hadron.app to /Applications.
+
+## Windows
+
+* Install [SuperCollider](https://supercollider.github.io/download) using the EXE installer and use the suggested location.
+* Download [Hadron-1.0.0.exe](https://hermantorjussen.no/Hadron-1.0.0.dmg), run it and let the installer finish. It will show a greenish animation while installing.
 
 # usage
 
-Keyboard shortcuts for common actions:
+Start the application, type in SuperCollider code and evaluate it with `cmd/ctrl+enter`. Following are the keyboard shortcuts. Depending on your platform you use either the Command or Control key as a modifier:
 
-### cmd+b
+### cmd/ctrl+b
 Boot server
 
-### cmd+enter
+### cmd/ctrl+enter
 Evaluate code region
 
 ### shift+enter
 Evaluate code line
 
-### cmd+.
+### cmd/ctrl+.
 Hush. Free all synths. Stop all audio output
 
-### cmd+shift+l
+### cmd/ctrl+shift+l
 Recompile class library
 
-### cmd+m
+### cmd/ctrl+m
 Show server meter
 
-### cmd+shift+m
+### cmd/ctrl+shift+m
 Show server scope
 
-### cmd+l
+### cmd/ctrl+l
 Select current line(s)
 
-### cmd+shift+d
+### cmd/ctrl+shift+d
 Duplicate current line
 
-### cmd+shift+k
+### cmd/ctrl+shift+k
 Comment/uncomment text selection
 
-### cmd+d
+### cmd/ctrl+d
 Lookup help for word under cursor
 
-### cmd+i
+### cmd/ctrl+i
 Show/hide help browser
 
-### cmd+p
+### cmd/ctrl+p
 Show/hide post window
 
-### cmd+plus
+### cmd/ctrl++
 Increase font size
 
-### cmd+minus
+### cmd/ctrl+-
 Decrease font size
 
-### cmd+0
+### cmd/ctrl+0
 Reset font size
 
-### cmd+shift+p
+### cmd/ctrl+shift+p
 Clear post window
 
-### cmd+o
+### cmd/ctrl+o
 Open file
 
-### cmd+s
+### cmd/ctrl+s
 Save file
 
-### cmd+shift+s
+### cmd/ctrl+shift+s
 Save file as
 
-### cmd+q
+### cmd/ctrl+q, cmd/ctrl+w, alt+f4
 Quit application
 
 # developing

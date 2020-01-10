@@ -14,8 +14,9 @@ const helpPane = document.querySelector('#help')
 const postPane = document.querySelector('#post')
 const iframe = helpPane.querySelector('iframe')
 const output = document.querySelector('#post output')
-let mainEditor
-var docmap
+let mainEditor = null
+let windowClosed = false
+var docmap = null
 
 async function start () {
   lang.boot()
@@ -27,7 +28,7 @@ async function start () {
   menu.setup()
   document.addEventListener('click', onClick)
   window.addEventListener('mousedown', onMousedown)
-  window.onbeforeunload = onQuit
+  window.addEventListener('beforeunload', onQuit)
 }
 
 function onDocsLoad () {
@@ -160,17 +161,20 @@ function onClick (event) {
   }
 }
 
-async function onQuit (event) {
+function onQuit (event) {
+  if (windowClosed) return
+  event.returnValue = false
   const question = 'Sure you want to quit?'
   const message = 'You might have unsaved work.'
-  const choice = showConfirmation(question, message)
-  if (choice === 0) {
-    await lang.evaluate('Server.default.quit')
-    await lang.quit()
-    app.exit(0)
-  } else {
-    event.preventDefault()
-  }
+  setTimeout(async () => {
+    const choice = showConfirmation(question, message)
+    if (choice === 0) {
+      await lang.evaluate('Server.default.quit')
+      await lang.quit()
+      windowClosed = true
+      app.exit(0)
+    }
+  })
 }
 
 function post (message, type = 'value') {

@@ -94,7 +94,15 @@ npm install
 npm start
 ```
 
-The application should start automatically.
+The application should start automatically. 
+
+To build the installer, use:
+
+```
+npm run make
+```
+
+It should be located somewhere under the `out` directory.
 
 # libraries
 

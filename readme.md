@@ -11,12 +11,12 @@ Editor for [SuperCollider](https://github.com/supercollider/supercollider) with 
 ### mac
 
 * Install [SuperCollider](https://supercollider.github.io/download) using the DMG file and place it under /Applications/SuperCollider/SuperCollider.app.
-* Download [Hadron-1.0.1.dmg](https://github.com/htor/hadron-editor/releases/download/v1.0.0/Hadron-1.0.1.dmg), open it and drag Hadron.app to /Applications.
+* Download [Hadron-1.0.2.dmg](https://github.com/htor/hadron-editor/releases/download/v1.0.2/Hadron-1.0.2.dmg), open it and drag Hadron.app to /Applications.
 
 ### windows
 
 * Install [SuperCollider](https://supercollider.github.io/download) using the EXE installer and use the suggested location.
-* Download [Hadron-1.0.1.exe](https://github.com/htor/hadron-editor/releases/download/v1.0.0/Hadron-1.0.1.exe), run it and let the installer finish. It will show a greenish animation while installing.
+* Download [Hadron-1.0.2.exe](https://github.com/htor/hadron-editor/releases/download/v1.0.2/Hadron-1.0.2.exe), run it and let the installer finish. It will show a greenish animation while installing.
 
 # usage
 

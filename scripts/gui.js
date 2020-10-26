@@ -59,8 +59,8 @@ function onDocsLoad () {
   // setup code blocks
   doc.querySelectorAll('textarea').forEach(editor.attach)
 
-  // make docmap avalable
-  eval(fs.readFileSync(path.resolve(APPSUPPORT_PATH, 'docmap.js'), 'utf-8'))
+  // make docmap available globally
+  eval('window.' + fs.readFileSync(path.resolve(APPSUPPORT_PATH, 'docmap.js'), 'utf-8'))
 
   // fix menubar linx
   doc.querySelectorAll('.menu-link.home').forEach((home) => {

@@ -1,7 +1,7 @@
 {
   "name": "hadron-editor",
-  "version": "1.0.1",
-  "description": "Experimental editor for SuperCollider with built-in help browser and post window",
+  "version": "1.0.2",
+  "description": "editor for SuperCollider with built-in help browser and post window",
   "repository": "https://github.com/htor/hadron-editor.git",
   "author": "htor",
   "license": "MIT",
@@ -15,10 +15,10 @@
     "test": "standard -v"
   },
   "devDependencies": {
-    "@electron-forge/cli": "6.0.0-beta.45",
+    "@electron-forge/cli": "^6.0.0-beta.45",
     "@electron-forge/maker-dmg": "^6.0.0-beta.47",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.45",
-    "electron": "6.0.11",
+    "electron": "^6.0.11",
     "standard": "^14.3.3"
   },
   "dependencies": {

@@ -106,6 +106,8 @@ function onDocsLoad () {
   // render docs before navigating to them
   doc.addEventListener('click', async (event) => {
     if (event.target.tagName === 'A' && event.target.closest('.contents')) {
+      // skip dropdown toggle links
+      if (event.target.classList.contains('inheritedmets_toggle')) return
       const href = event.target.href.split('#')[0]
       if (href.match(/^file:.+\.html$/)) {
         event.preventDefault()

@@ -1,24 +1,26 @@
 const fs = require('fs')
-const path = require('path')
-const glob = require('glob')
+const package = require('../package.json')
 const { app, dialog, BrowserWindow } = require('electron')
-const { TEMP_PATH, INSTALLATION_PATH, APPSUPPORT_PATH } = require('./utils')
+const { LOGFILE_PATH, INSTALLATION_PATH, APPSUPPORT_PATH } = require('./utils')
 let mainWindow
 
 if (require('electron-squirrel-startup')) return
 
+function log (message) {
+  console.error(message)
+  fs.appendFileSync(LOGFILE_PATH, `${message}\n`, 'utf8')
+}
+
 function showError (message) {
   const target = mainWindow || null
-  const logFile = path.resolve(TEMP_PATH, 'hadron-editor.txt')
-  const advice = `See ${logFile} for details`
+  const advice = `See ${LOGFILE_PATH} for details`
+  message = message ? `${message.toString()}\n${advice}` : advice
+  log(`Error: ${message}`)
   dialog.showMessageBoxSync(target, {
     type: 'error',
     message: 'Oops! Something bad happened',
-    detail: message ? `${message}\n\n${advice}` : advice
+    detail: message
   })
-  message = `\n${new Date().toLocaleString()}\nError: ${message.toString()}`
-  console.error(message)
-  fs.appendFileSync(logFile, message)
 }
 
 function showConfirmation (question, message) {
@@ -72,6 +74,10 @@ function createWindow () {
 app.commandLine.appendSwitch('disable-site-isolation-trials')
 
 app.on('ready', async () => {
+  log(`\nhadron v${package.version}`);
+  log(`Executable path: ${INSTALLATION_PATH}`);
+  log(`Application files path: ${APPSUPPORT_PATH}`);
+  log(`Log file path: ${LOGFILE_PATH}`);
   checkInstallation()
   createWindow()
 })
